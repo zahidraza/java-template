@@ -1,0 +1,43 @@
+server:
+  port: 8086
+
+spring:
+  datasource:
+    ###### PostgreSQL Configuration #######
+#    driverClassName: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/tnt_db_master
+#    username: mdzahidraza
+#    password: zahid
+#    platform: postgresql
+#    initialize: true
+#    continue-on-error: true
+    #####  MySQL Configuration #######
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tnt_db_master?createDatabaseIfNotExist=true
+    username: root
+    password: zahid
+    platform: mysql
+    initialize: true
+    continue-on-error: true
+  jpa:
+    show-sql: true
+    format-sql: true
+    hibernate:
+      ddl-auto: none
+
+
+security:
+  filter-order: 0
+  oauth2:
+    resource:
+      id: TEST_RESOURCE
+      filter-order: 3
+
+endpoints:
+  auditevents:
+    enabled: true
+    sensitive: false
+  metrics:
+    enabled: true
+    sensitive: false
+
