@@ -1,0 +1,15 @@
+name: Md Zahid Raza
+age: 25
+address:
+  city: Bangalore
+  country: India
+phones:
+  - number: 8987525008
+  - number: 8904360418
+schema:
+  postgresql:
+    init:
+      filename: schema-postgresql.sql
+  mysql:
+    init:
+      filename: schema-mysql.sql

@@ -1,0 +1,3 @@
+tenant:
+  database:
+    init-script-filename: initdb.sh

@@ -8,8 +8,8 @@ import java.io.*;
 /**
  * Created by mdzahidraza on 27/06/17.
  */
-public class ScriptUtility {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptUtility.class);
+public class ScriptUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptUtils.class);
 
     public static int execute(String... command) {
         File dir = new File(Utils.getAppHome() + File.separator + "bin");

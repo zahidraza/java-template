@@ -1,6 +1,6 @@
 package com.jazasoft.mtdb.service;
 
-import com.jazasoft.mtdb.MyEvent;
+import com.jazasoft.mtdb.TenantCreatedEvent;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
 import org.dozer.Mapper;
@@ -54,7 +54,7 @@ public class CompanyService implements ApplicationEventPublisherAware {
 
     public Company save(Company company) {
         LOGGER.debug("save: company = {}", company);
-        publisher.publishEvent(new MyEvent(applicationContext,company.getDbName()));
+        publisher.publishEvent(new TenantCreatedEvent(applicationContext,company.getDbName()));
         company.setEnabled(true);
         return companyRepository.save(company);
     }

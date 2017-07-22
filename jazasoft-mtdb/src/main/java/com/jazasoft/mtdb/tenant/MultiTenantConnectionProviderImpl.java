@@ -1,11 +1,10 @@
 package com.jazasoft.mtdb.tenant;
 
 import com.jazasoft.mtdb.Constants;
-import com.jazasoft.mtdb.MyEvent;
+import com.jazasoft.mtdb.TenantCreatedEvent;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
-import com.jazasoft.mtdb.util.ConfigUtility;
-import com.jazasoft.mtdb.util.ScriptUtility;
+import com.jazasoft.mtdb.util.ScriptUtils;
 import com.jazasoft.mtdb.util.Utils;
 import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ import java.util.Map;
 @Component
 @Transactional(value="masterTransactionManager", readOnly = true)
 //@Profile("prod")
-public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl implements ApplicationListener<ContextRefreshedEvent>{
+public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl implements ApplicationListener<TenantCreatedEvent>{
 
     private static final long serialVersionUID = 6246085840652870138L;
 
@@ -46,7 +46,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
     private String url;
 
     @Value("${spring.datasource.driverClassName}")
-    private String dataSourceClassName;
+    private String driverClassName;
 
     @Value("${spring.datasource.username}")
     private String user;
@@ -63,6 +63,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
     @PostConstruct
     public void load() {
         map = new HashMap<>();
+        init();
     }
 
     public void init() {
@@ -84,21 +85,16 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
     }
 
     @Override
-    protected DataSource selectDataSource(String tenantIdentifier) {
-        LOGGER.debug("+++++++++++ Selecting data source for {}", tenantIdentifier);
+    public DataSource selectDataSource(String tenantIdentifier) {
+        LOGGER.info("+++++++++++ Selecting data source for {}", tenantIdentifier);
+        System.out.println(map.containsKey(tenantIdentifier));
         return map.containsKey(tenantIdentifier) ? map.get(tenantIdentifier) : dataSource ;
     }
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+    public void onApplicationEvent(TenantCreatedEvent tenantCreatedEvent) {
 
-        if (contextRefreshedEvent instanceof MyEvent) {
-            LOGGER.info("-$$$- adding new datasource");
-            MyEvent event = (MyEvent)contextRefreshedEvent;
-            addDatasource(event.getDbName());
-        }else {
-            init();
-        }
+        addDatasource(tenantCreatedEvent.getDbName());
 
     }
 
@@ -112,7 +108,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
     private DataSource getDatasource(String tenantId) {
         String newUrl = url.replace(Utils.databaseNameFromJdbcUrl(url), tenantId);
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(dataSourceClassName);
+        dataSource.setDriverClassName(driverClassName);
         dataSource.setUrl(newUrl);
         dataSource.setUsername(user);
         dataSource.setPassword(password);
@@ -122,12 +118,17 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
 
     private void initDb(String tenant) {
         LOGGER.info("initDb");
-        String script = ConfigUtility.getInstance().getConfigProperty(Constants.DB_INIT_SCRIPT_FILENAME_KEY,null);
+        String script = null;
+        try {
+            script = (String) Utils.getConfProperty(Constants.DB_INIT_SCRIPT_FILENAME_KEY);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String schemaFile = null;
         if (platform.equalsIgnoreCase("mysql")) {
-            schemaFile = ConfigUtility.getInstance().getConfigProperty(Constants.SCHEMA_MYSQL_INIT_FILENAME_KEY,null);
+            schemaFile = "schema-mysql.sql";
         }else if (platform.equalsIgnoreCase("postgresql")) {
-            schemaFile = ConfigUtility.getInstance().getConfigProperty(Constants.SCHEMA_POSTGRESQL_INIT_FILENAME_KEY,null);
+            schemaFile = "schema-postgresql.sql";
         }
         if (script == null || schemaFile == null) {
             LOGGER.error("Database|Schema initialization file not specified.");
@@ -135,7 +136,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
         }
         schemaFile = Utils.getAppHome() + File.separator + "conf" + File.separator + schemaFile;
         LOGGER.info("Executing: {} {} {} {}", script, platform, tenant, schemaFile);
-        int exitCode = ScriptUtility.execute("/bin/bash", script, platform, tenant, schemaFile, user, password);
+        int exitCode = ScriptUtils.execute("/bin/bash", script, platform, tenant, schemaFile, user, password);
         if (exitCode == 0) {
             LOGGER.info("Database initialized successfully for tenant = {}", tenant);
         }else {

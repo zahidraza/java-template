@@ -23,7 +23,7 @@ import java.util.List;
  * Created by mdzahidraza on 21/07/17.
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.jazasoft.mtdb"})
+@ComponentScan(basePackages = {"com.jazasoft.mtdb","com.jazasoft.mtdbapp"})
 public class MtdbApp extends App{
 
     private final Logger LOGGER = LoggerFactory.getLogger(MtdbApp.class);

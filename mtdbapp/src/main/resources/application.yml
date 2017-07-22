@@ -1,3 +1,5 @@
+app:
+  home: MTDBAPP_HOME
 server:
   port: 8086
 
@@ -24,6 +26,8 @@ spring:
     format-sql: true
     hibernate:
       ddl-auto: none
+  aop:
+    proxy-target-class: true
 
 
 security:

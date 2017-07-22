@@ -26,6 +26,7 @@ import java.util.Map;
 /**
  * Created by mdzahidraza on 26/06/17.
  */
+@Configuration
 @EnableConfigurationProperties(JpaProperties.class)
 @EnableJpaRepositories(
         entityManagerFactoryRef = "tenantEntityManager",

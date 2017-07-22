@@ -1,6 +1,8 @@
 package com.jazasoft.mtdb.service;
 
 
+import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.UserCreatedEvent;
 import com.jazasoft.mtdb.dto.UserDto;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.entity.User;
@@ -12,9 +14,13 @@ import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -23,10 +29,12 @@ import java.util.List;
  */
 @Service
 @Transactional(value = "masterTransactionManager")
-public class UserService {
+public class UserService implements ApplicationEventPublisherAware {
     private final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     UserRepository userRepository;
+
+    private ApplicationEventPublisher publisher;
 
     @Autowired Mapper mapper;
 
@@ -35,15 +43,22 @@ public class UserService {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    ApplicationContext applicationContext;
 //
 //    @PersistenceContext
 //    EntityManager entityManager;
 
-    @Autowired
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.publisher = applicationEventPublisher;
+    }
 
     public User findOne(Long id) {
         LOGGER.debug("findOne(): id = {}",id);
@@ -101,7 +116,14 @@ public class UserService {
         if (user.getRoles() != null) {
             Utils.getRoleList(user.getRoles()).stream().forEach(role -> user.addRole(roleRepository.findOneByName("ROLE_"+role).get()));
         }
-        return userRepository.save(user);
+        User user2 = userRepository.save(user);
+
+        /* If User is not master publish user created event to add user in tenant user table*/
+        if ( user2.getRoleList().stream().filter(role -> role.getName().equals(Constants.ROLE_MASTER)).count() == 0 && user2.getCompany() != null) {
+            UserCreatedEvent event = new UserCreatedEvent(applicationContext, user2.getId(), user2.getCompany().getDbName());
+            publisher.publishEvent(event);
+        }
+        return user2;
     }
 
     @Transactional

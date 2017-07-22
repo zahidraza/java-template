@@ -12,27 +12,9 @@ import java.util.Map;
 public class YamlUtils {
 
     private static YamlUtils INSTANCE;
-    private String appFile = "application.yaml";
-    private String confFile = Utils.getAppHome() + File.separator + "conf" + File.separator + "config.yaml";
-    Map appRoot;
 
     private YamlUtils() {
-        InputStream is = null;
-        try {
-            is = YamlUtils.class.getClassLoader().getResourceAsStream(appFile);
-            YamlReader readerAppProps = new YamlReader(new InputStreamReader(is));
-            appRoot = (Map)readerAppProps.read();
-        } catch (YamlException e) {
-            e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+
     }
 
     public static YamlUtils getInstance() {
@@ -65,26 +47,6 @@ public class YamlUtils {
         return getNestedProperty((Map)reader.read(),key);
     }
 
-    /**
-     *  Read particular property of application.yaml file
-     * @param key
-     * @return Object which can either String or Map or List, null if not found
-     * @throws IOException
-     */
-    public Object getAppProperty(String key) throws IOException{
-        return getNestedProperty(appRoot,key);
-    }
-
-    /**
-     *  Read particular property of config.yaml file
-     * @param key
-     * @return Object which can either String or Map or List, null if not found
-     * @throws IOException
-     */
-    public Object getConfProperty(String key) throws IOException{
-        YamlReader reader = new YamlReader(new FileReader(confFile));
-        return getNestedProperty((Map)reader.read(),key);
-    }
 
     public Object getNestedProperty(Map root, String key) {
         String[] keys = key.split("\\.");
