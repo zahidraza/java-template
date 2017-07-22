@@ -86,7 +86,7 @@ public class UserService implements ApplicationEventPublisherAware {
     }
 
     public User findByUsername(String username) {
-        LOGGER.debug("findByUsername(): username = " , username);
+        LOGGER.debug("findByUsername(): username = {}" , username);
         return userRepository.findOneByUsername(username).get();
     }
 

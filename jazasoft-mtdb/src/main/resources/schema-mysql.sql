@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `role` (
   CONSTRAINT `FK_role_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS `user_role` (
+CREATE TABLE IF NOT EXISTS `user_role_rel` (
   `user_id` bigint(20) NOT NULL,
   `role_id` bigint(20) NOT NULL,
   PRIMARY KEY (`user_id`,`role_id`),

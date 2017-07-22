@@ -14,5 +14,5 @@ INSERT INTO users (id, modified_at, enabled, account_expired, account_locked, cr
 (1,	'2017-06-28 00:25:42.25',	true, false,	false,	false,	'zahid7292@gmail.com', '8987525008',	'Md Zahid Raza',	NULL,	NULL,	'$2a$10$8gha167uTM3jhArZwFk6UOxgNChnMhWfrR59ND/TtzvTynwo2129C',	NULL,	'zahid7292',	NULL);
 
 
-INSERT INTO user_role (user_id, role_id) VALUES
+INSERT INTO user_role_rel (user_id, role_id) VALUES
 (1,	1);

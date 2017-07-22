@@ -2,6 +2,7 @@ package com.jazasoft.mtdb.security;
 
 import com.jazasoft.mtdb.ApiUrls;
 import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.entity.Role;
 import com.jazasoft.mtdb.entity.UrlInterceptor;
 import com.jazasoft.mtdb.entity.User;
 import com.jazasoft.mtdb.service.InterceptorService;
@@ -65,8 +66,7 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
             if (url != null) {
                 url = getUrl(url);
                 LOGGER.debug("Request for Url = {}, method = {}", url, httpMethod);
-                List<String> roles = user.getRoleList().stream().map(role -> role.getName()).collect(Collectors.toList());
-
+                List<String> roles = user.getRoleList().stream().map(Role::getName).collect(Collectors.toList());
                 //Only Master is authorized to acces Company Resource
                 if (url.contains(ApiUrls.ROOT_URL_COMPANIES)) {
                     if (roles.contains(Constants.ROLE_MASTER)) {
