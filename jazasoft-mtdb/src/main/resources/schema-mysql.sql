@@ -1,6 +1,3 @@
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `company` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `enabled` bit(1) NOT NULL,
@@ -11,14 +8,7 @@ CREATE TABLE IF NOT EXISTS `company` (
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `users`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `enabled` bit(1) NOT NULL,
@@ -43,12 +33,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   CONSTRAINT `FKbwv4uspmyi7xqjwcrgxow361t` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
---
--- Table structure for table `role`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `role` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT NULL,
@@ -58,14 +42,7 @@ CREATE TABLE IF NOT EXISTS `role` (
   KEY `FK_role_company` (`company_id`),
   CONSTRAINT `FK_role_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `user_role`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `user_role` (
   `user_id` bigint(20) NOT NULL,
   `role_id` bigint(20) NOT NULL,
@@ -74,14 +51,7 @@ CREATE TABLE IF NOT EXISTS `user_role` (
   CONSTRAINT `FKa68196081fvovjhkek5m97n3y` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
   CONSTRAINT `FKj345gk1bovqvfame88rcx7yyx` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `url_interceptor`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `url_interceptor` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `access` varchar(255) DEFAULT NULL,
@@ -92,8 +62,6 @@ CREATE TABLE IF NOT EXISTS `url_interceptor` (
   KEY `FK_url_interceptor_company` (`company_id`),
   CONSTRAINT `FK_url_interceptor_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 
 ------------------------------------------------
 

@@ -54,10 +54,13 @@ public class MtdbApp extends App{
         };
     }
 
-    @Bean
-    public Mapper dozerBeanMapper() {
-        List<String> list = new ArrayList<>();
-        list.add("dozer_mapping.xml");
-        return new DozerBeanMapper(list);
+    @Override
+    protected void addDozerMappings(List<String> list) {
+        list.add("dozer_tenant.xml");
+    }
+
+    @Override
+    protected void addMessageSourceBasenames(List<String> list) {
+        super.addMessageSourceBasenames(list);
     }
 }
