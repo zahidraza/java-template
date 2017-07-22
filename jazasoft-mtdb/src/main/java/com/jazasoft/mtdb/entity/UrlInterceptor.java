@@ -1,5 +1,7 @@
 package com.jazasoft.mtdb.entity;
 
+import org.springframework.hateoas.core.Relation;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * Created by mdzahidraza on 28/06/17.
  */
 @Entity
+@Relation(value = "interceptor", collectionRelation = "interceptors")
 public class UrlInterceptor implements Serializable {
 
     @Id

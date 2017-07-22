@@ -1,9 +1,11 @@
 package com.jazasoft.mtdb.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.hateoas.core.Relation;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,19 +14,20 @@ import java.util.Set;
  * Created by mdzahidraza on 26/06/17.
  */
 @Entity
+@Relation(value = "company", collectionRelation = "companies")
 public class Company extends BaseEntity implements Serializable{
 
-    @NotNull
+    @NotNull @Size(min = 3, max = 50)
     @Column(nullable = false, unique = true)
     private String name;
 
     private String description;
 
-    @NotNull
+    @NotNull @Size(min = 3, max = 100)
     @Column(nullable = false)
     private String address;
 
-    @NotNull
+    @NotNull @Size(min = 3, max = 50)
     @Column(nullable = false, unique = true)
     private String dbName;
 

@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:tnt_db_master;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    platform: h2
+    initialize: true
+    continue-on-error: false
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    format-sql: false
+    hibernate:
+      ddl-auto: update
+
+#  aop:
+#    proxy-target-class: true
+ 
+  # enable H2 web console and set url for web console
+  # http://localhost:8080/console
+  h2:
+    console:
+      enabled: true
+      path: /console
+security:
+    basic:
+        enabled: false
+#    enable-csrf: true
