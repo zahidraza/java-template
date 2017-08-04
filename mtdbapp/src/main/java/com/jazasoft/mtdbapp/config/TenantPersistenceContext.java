@@ -6,6 +6,7 @@ import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,10 @@ import java.util.Map;
 public class TenantPersistenceContext{
     private final Logger LOGGER = LoggerFactory.getLogger(TenantPersistenceContext.class);
 
+
+    @Value("${spring.jpa.properties.hibernate.dialect}")
+    private String dialect;
+
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         return new HibernateJpaVendorAdapter();
@@ -67,6 +72,7 @@ public class TenantPersistenceContext{
         properties.put("hibernate.physical_naming_strategy", "org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy");
         properties.put("hibernate.id.new_generator_mappings", "false");
         properties.put("org.hibernate.envers.audit_table_suffix","_history");
+        properties.put("hibernate.dialect", dialect);
         emfBean.setJpaPropertyMap(properties);
         return emfBean;
     }

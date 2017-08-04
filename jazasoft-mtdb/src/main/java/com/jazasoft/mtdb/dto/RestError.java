@@ -6,7 +6,11 @@ public class RestError {
 	private String message;
 	private String devMessage;
 	private String moreInfo;
-	
+
+	public RestError(int status, int code, String message) {
+		this(status,code,message,"","");
+	}
+
 	public RestError(int status, int code, String message, String devMessage, String moreInfo) {
 		super();
 		this.status = status;

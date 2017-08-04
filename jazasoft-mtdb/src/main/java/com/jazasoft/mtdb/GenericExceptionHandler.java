@@ -37,10 +37,18 @@ public class GenericExceptionHandler {
     private List<FieldError> processFieldError(List<org.springframework.validation.FieldError> fieldErrors) {
         List<FieldError> errors = fieldErrors.stream()
                 .map(error -> {
-                    return new FieldError(error.getField(),
-                            error.getRejectedValue(),
-                            messageSource.getMessage(error.getCodes()[0], null, error.getDefaultMessage(), LocaleContextHolder.getLocale())
-                    );
+                    if (error.getField().contains("list")) {
+                        return new FieldError(error.getField(),
+                                error.getRejectedValue(),
+                                messageSource.getMessage(error.getCodes()[1], null, error.getDefaultMessage(), LocaleContextHolder.getLocale())
+                        );
+                    }else {
+                        return new FieldError(error.getField(),
+                                error.getRejectedValue(),
+                                messageSource.getMessage(error.getCodes()[0], null, error.getDefaultMessage(), LocaleContextHolder.getLocale())
+                        );
+                    }
+
                 })
                 .collect(Collectors.toList());
         return errors;

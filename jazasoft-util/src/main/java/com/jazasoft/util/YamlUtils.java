@@ -1,6 +1,5 @@
-package com.jazasoft.mtdb.util;
+package com.jazasoft.util;
 
-import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 
 import java.io.*;

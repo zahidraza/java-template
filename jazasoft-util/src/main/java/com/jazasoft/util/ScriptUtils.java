@@ -1,4 +1,4 @@
-package com.jazasoft.mtdb.util;
+package com.jazasoft.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +11,7 @@ import java.io.*;
 public class ScriptUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptUtils.class);
 
-    public static int execute(String... command) {
-        File dir = new File(Utils.getAppHome() + File.separator + "bin");
+    public static int execute(File dir, String... command) {
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.directory(dir);
         try {

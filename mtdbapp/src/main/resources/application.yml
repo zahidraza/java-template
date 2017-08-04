@@ -26,8 +26,9 @@ spring:
     format-sql: true
     hibernate:
       ddl-auto: none
-  aop:
-    proxy-target-class: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
 
 
 security:

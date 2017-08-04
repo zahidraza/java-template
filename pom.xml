@@ -12,6 +12,7 @@
         <module>jazasoft-mtdb</module>
         <module>basicapp</module>
         <module>mtdbapp</module>
+        <module>jazasoft-util</module>
     </modules>
 
     <name>jazasoft</name>

@@ -1,8 +1,5 @@
 package com.jazasoft.mtdb.test;
 
-//import com.jazasoft.mt.MyEvent;
-//import com.jazasoft.mt.entity.master.Company;
-//import com.jazasoft.mt.repository.master.CompanyRepository;
 import com.jazasoft.mtdb.TenantCreatedEvent;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
@@ -15,7 +12,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -69,6 +65,7 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
     @PostConstruct
     public void load() {
         map = new HashMap<>();
+        init();
     }
 
     public void init() {

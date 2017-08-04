@@ -1,4 +1,4 @@
-package com.jazasoft.mtdb.util;
+package com.jazasoft.util;
 
 
 import java.io.*;
@@ -22,7 +22,7 @@ public class PropUtils {
         return INSTANCE;
     }
 
-    public Properties getConfigProps(File file) {
+    public Properties getProps(File file) {
         Properties props = new Properties();
         InputStream is = null;
         try {
@@ -43,13 +43,13 @@ public class PropUtils {
         return props;
     }
 
-    public String getConfigProperty(File file, String key, String defaultValue) {
-        Properties props = getConfigProps(file);
+    public String getProperty(File file, String key, String defaultValue) {
+        Properties props = getProps(file);
         return props.getProperty(key, defaultValue);
     }
 
-    public void setConfigProperty(File file, String key, String value) {
-        Properties prop = getConfigProps(file);
+    public void setProperty(File file, String key, String value) {
+        Properties prop = getProps(file);
         OutputStream output = null;
         try {
             output = new FileOutputStream(file);

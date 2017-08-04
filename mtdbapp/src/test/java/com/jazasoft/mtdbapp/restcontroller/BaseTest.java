@@ -41,7 +41,6 @@ public class BaseTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String resp = mvcResult.getResponse().getContentAsString();
-        System.out.println(resp);
         OauthResponse oauthResponse = mapper.readValue(resp, OauthResponse.class);
         accessToken1 = oauthResponse.getAccess_token();
 
@@ -57,7 +56,6 @@ public class BaseTest {
                 .andExpect(status().isOk())
                 .andReturn();
         resp = mvcResult.getResponse().getContentAsString();
-        System.out.println(resp);
         oauthResponse = mapper.readValue(resp, OauthResponse.class);
         accessToken2 = oauthResponse.getAccess_token();
     }

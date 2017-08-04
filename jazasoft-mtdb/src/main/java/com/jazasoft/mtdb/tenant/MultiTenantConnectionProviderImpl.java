@@ -4,8 +4,8 @@ import com.jazasoft.mtdb.Constants;
 import com.jazasoft.mtdb.TenantCreatedEvent;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
-import com.jazasoft.mtdb.util.ScriptUtils;
 import com.jazasoft.mtdb.util.Utils;
+import com.jazasoft.util.ScriptUtils;
 import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,8 +139,9 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
             return;
         }
         schemaFile = Utils.getAppHome() + File.separator + "conf" + File.separator + schemaFile;
+        File dir = new File(Utils.getAppHome() + File.separator + "bin");
         LOGGER.info("Executing: {} {} {} {}", script, platform, tenant, schemaFile);
-        int exitCode = ScriptUtils.execute("/bin/bash", script, platform, tenant, schemaFile, user, password);
+        int exitCode = ScriptUtils.execute(dir,"/bin/bash", script, platform, tenant, schemaFile, user, password);
         if (exitCode == 0) {
             LOGGER.info("Database initialized successfully for tenant = {}", tenant);
         }else {

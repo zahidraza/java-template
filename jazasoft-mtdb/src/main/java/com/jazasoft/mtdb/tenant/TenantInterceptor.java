@@ -101,6 +101,7 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
                         }
                     }
                     req.setAttribute(Constants.CURRENT_USER, user.getId());
+                    req.setAttribute(Constants.CURRENT_TENANT_ID, user.getCompany().getId());
                 }
             }
         }

@@ -13,3 +13,11 @@ schema:
   mysql:
     init:
       filename: schema-mysql.sql
+friends:
+  - !com.jazasoft.mtdbapp.dto.Contact
+    name: Taufeeque
+    age: 22
+enemies:
+  - !com.jazasoft.mtdbapp.dto.Contact
+    name: Unknown
+    age: 20

@@ -1,13 +1,15 @@
 package com.jazasoft.mtdbapp.util;
 
 import com.jazasoft.mtdb.util.Utils;
-import com.jazasoft.mtdb.util.YamlUtils;
+import com.jazasoft.mtdbapp.dto.Contact;
+import com.jazasoft.util.YamlUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +39,14 @@ public class YamlUtilsTest {
         Assert.assertEquals(2, list.size());
         Assert.assertEquals("8987525008", ((Map)list.get(0)).get("number"));
         Assert.assertEquals("8904360418", ((Map)list.get(1)).get("number"));
+    }
+
+    @Test
+    public void testGetFileProprtyBean() throws IOException{
+        List<Contact> friends = (ArrayList<Contact>)yamlUtils.getProperty(testFile, "friends");
+        Assert.assertEquals(1, friends.size());
+        Assert.assertEquals("Taufeeque", friends.get(0).getName());
+        Assert.assertEquals(22, friends.get(0).getAge());
     }
 
 
