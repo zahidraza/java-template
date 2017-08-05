@@ -67,6 +67,8 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
                 url = getUrl(url);
                 LOGGER.debug("Request for Url = {}, method = {}", url, httpMethod);
                 List<String> roles = user.getRoleList().stream().map(Role::getName).collect(Collectors.toList());
+
+                //More Specific Url case at top
                 //Only Master is authorized to acces Company Resource
                 if (url.contains(ApiUrls.ROOT_URL_COMPANIES)) {
                     if (roles.contains(Constants.ROLE_MASTER)) {
@@ -157,12 +159,13 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
     }
 
     private String getUrl(String url) {
+        //System.out.println("Actual url: " + url);
         url = url.split("\\?")[0];
         String[] urls = url.split("/");
         Pattern pattern = Pattern.compile("\\d+");
         for (int i = 0; i < urls.length; i++) {
             if (pattern.matcher(urls[i]).matches()) {
-                urls[i] = "{\\\\d+}";
+                urls[i] = "{\\d+}";
             }
         }
         StringBuilder builder = new StringBuilder();

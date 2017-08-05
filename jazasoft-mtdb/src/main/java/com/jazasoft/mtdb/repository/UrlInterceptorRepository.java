@@ -14,6 +14,8 @@ public interface UrlInterceptorRepository extends JpaRepository<UrlInterceptor,L
 
     List<UrlInterceptor> findByUrl(String url);
 
+    List<UrlInterceptor> findByAccess(String access);
+
     List<UrlInterceptor> findByCompanyAndUrl(Company company, String url);
 
     List<UrlInterceptor> findByCompany(Company company);

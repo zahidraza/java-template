@@ -3,11 +3,14 @@ package com.jazasoft.mtdb.service;
 
 import com.jazasoft.mtdb.Constants;
 import com.jazasoft.mtdb.UserCreatedEvent;
+import com.jazasoft.mtdb.dto.Permission;
 import com.jazasoft.mtdb.dto.UserDto;
 import com.jazasoft.mtdb.entity.Company;
+import com.jazasoft.mtdb.entity.UrlInterceptor;
 import com.jazasoft.mtdb.entity.User;
 import com.jazasoft.mtdb.repository.CompanyRepository;
 import com.jazasoft.mtdb.repository.RoleRepository;
+import com.jazasoft.mtdb.repository.UrlInterceptorRepository;
 import com.jazasoft.mtdb.repository.UserRepository;
 import com.jazasoft.mtdb.util.Utils;
 import org.dozer.Mapper;
@@ -21,8 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by mdzahidraza on 26/06/17.
@@ -32,27 +35,34 @@ import java.util.List;
 public class UserService implements ApplicationEventPublisherAware {
     private final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
-    UserRepository userRepository;
-
     private ApplicationEventPublisher publisher;
 
-    @Autowired Mapper mapper;
+    UserRepository userRepository;
 
-    @Autowired
+    Mapper mapper;
+
     CompanyRepository companyRepository;
 
-    @Autowired
     RoleRepository roleRepository;
 
-    @Autowired
+    UrlInterceptorRepository interceptorRepository;
+
     ApplicationContext applicationContext;
+
+    ResourceService resourceService;
 //
 //    @PersistenceContext
 //    EntityManager entityManager;
 
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, Mapper mapper, CompanyRepository companyRepository, RoleRepository roleRepository, UrlInterceptorRepository interceptorRepository, ApplicationContext applicationContext, ResourceService resourceService) {
         this.userRepository = userRepository;
+        this.mapper = mapper;
+        this.companyRepository = companyRepository;
+        this.roleRepository = roleRepository;
+        this.interceptorRepository = interceptorRepository;
+        this.applicationContext = applicationContext;
+        this.resourceService = resourceService;
     }
 
     @Override
@@ -62,7 +72,32 @@ public class UserService implements ApplicationEventPublisherAware {
 
     public User findOne(Long id) {
         LOGGER.debug("findOne(): id = {}",id);
-        return userRepository.findOne(id);
+        User user = userRepository.findOne(id);
+        if (user == null) return  null;
+        Set<Permission> permissions = new HashSet<>();
+        user.getRoleList().forEach(role -> {
+            List<UrlInterceptor> interceptors = interceptorRepository.findByAccess(role.getName());
+            //TODO: In case resource overlap for role, access of one will override other
+            permissions.addAll(getPermissions(interceptors));
+        });
+        user.setPermissions(permissions);
+        return user;
+    }
+
+    public User getProfile(String username) {
+        User user = findByEmail(username);
+        if (user == null) {
+            user = findByUsername(username);
+        }
+        if (user == null) return null;
+        Set<Permission> permissions = new HashSet<>();
+        user.getRoleList().forEach(role -> {
+            List<UrlInterceptor> interceptors = interceptorRepository.findByAccess(role.getName());
+            //TODO: In case resource overlap for role, access of one will override other
+            permissions.addAll(getPermissions(interceptors));
+        });
+        user.setPermissions(permissions);
+        return user;
     }
 
     public List<User> findAll() {
@@ -82,12 +117,12 @@ public class UserService implements ApplicationEventPublisherAware {
 
     public User findByEmail(String email) {
         LOGGER.debug("findByEmail(): email = {}",email);
-        return userRepository.findOneByEmail(email).get();
+        return userRepository.findOneByEmail(email).orElse(null);
     }
 
     public User findByUsername(String username) {
         LOGGER.debug("findByUsername(): username = {}" , username);
-        return userRepository.findOneByUsername(username).get();
+        return userRepository.findOneByUsername(username).orElse(null);
     }
 
     public Boolean exists(Long id) {
@@ -196,5 +231,27 @@ public class UserService implements ApplicationEventPublisherAware {
 //            System.out.println("modifiedBy = " + entity.getUsername());
 //        }
 //    }
+
+    private Set<Permission> getPermissions(List<UrlInterceptor> interceptors) {
+        Set<Permission> permissions = new HashSet<>();
+        Map<String, String> map = new HashMap<>();
+        interceptors.forEach(interceptor -> {
+            String res = resourceService.getResource(interceptor.getUrl());
+
+            String scope = map.get(res);
+            if (scope == null) {
+                map.put(res, Utils.getScope(interceptor.getHttpMethod()));
+            }else {
+                scope = scope + "," + Utils.getScope(interceptor.getHttpMethod());
+                map.put(res, scope);
+            }
+        });
+
+        map.forEach((key, value) -> {
+            permissions.add(new Permission(key, Utils.getListFromCsv(value).stream().collect(Collectors.toSet())));
+        });
+        return permissions;
+    }
+
 
 }

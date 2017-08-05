@@ -1,6 +1,8 @@
 package com.jazasoft.mtdb.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.jazasoft.mtdb.dto.Permission;
 import org.springframework.hateoas.core.Relation;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,7 +18,10 @@ import java.util.*;
 @Entity
 @Table(name = "users", indexes = @Index(columnList = "name,email,username"))
 @Relation(collectionRelation = "users", value = "user")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User extends BaseEntity implements UserDetails{
+
+    private static final long serialVersionUID = -8053465676093594890L;
 
     @NotNull @Size(min = 3, max = 50)
     @Column(nullable = false)
@@ -72,6 +77,9 @@ public class User extends BaseEntity implements UserDetails{
     )
     private Set<Role> roleList = new HashSet<>();
 
+    @Transient
+    private Set<Permission> permissions = new HashSet<>();
+
     public User() {
     }
 
@@ -93,6 +101,18 @@ public class User extends BaseEntity implements UserDetails{
         this.email = email;
         setPassword(password);
         this.mobile = mobile;
+    }
+
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void addPermission(Permission permission) {
+        permissions.add(permission);
     }
 
     @Override

@@ -24,7 +24,7 @@ public class UrlInterceptor implements Serializable {
     private String httpMethod;
 
     @NotNull
-    private String access;
+    private String access;  // User Role
 
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -32,6 +32,14 @@ public class UrlInterceptor implements Serializable {
 
     @Transient
     private Long companyId;
+
+    public UrlInterceptor() {
+    }
+
+    public UrlInterceptor(String url, String httpMethod) {
+        this.url = url;
+        this.httpMethod = httpMethod;
+    }
 
     public Long getId() {
         return id;

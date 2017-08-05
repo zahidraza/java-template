@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +79,9 @@ public class InterceptorRestController {
         }
         urlInterceptor = urlInterceptorService.save(urlInterceptor);
         Link selfLink = linkTo(InterceptorRestController.class).slash(urlInterceptor.getId()).withSelfRel();
-        return ResponseEntity.created(URI.create(selfLink.getHref())).build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(selfLink.getHref()));
+        return new ResponseEntity<>(urlInterceptorAssembler.toResource(urlInterceptor), headers, HttpStatus.CREATED);
     }
 
     @PutMapping(ApiUrls.URL_INTERCEPTORS_INTERCEPTOR)

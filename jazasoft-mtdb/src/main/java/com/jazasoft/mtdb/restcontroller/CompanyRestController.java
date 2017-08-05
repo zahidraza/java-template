@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -53,11 +54,13 @@ public class CompanyRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createCompany(@Valid @RequestBody Company company) {
+    public ResponseEntity<?> createCompany(@Valid @RequestBody Company company) {
         logger.debug("createCompany()");
         company = companyService.save(company);
         Link selfLink = linkTo(CompanyRestController.class).slash(company.getId()).withSelfRel();
-        return ResponseEntity.created(URI.create(selfLink.getHref())).build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(selfLink.getHref()));
+        return new ResponseEntity<>(companyAssembler.toResource(company), headers, HttpStatus.CREATED);
     }
 
     @PatchMapping(ApiUrls.URL_COMPANIES_COMPANY)

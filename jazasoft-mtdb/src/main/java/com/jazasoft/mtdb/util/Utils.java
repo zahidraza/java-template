@@ -90,6 +90,22 @@ public class Utils {
         }
     }
 
+    /**
+     * Get List From comma separated String value
+     * @param csv
+     * @return
+     */
+    public static List<String> getListFromCsv(String csv) {
+        List<String> result = new ArrayList<>();
+        String[] values = csv.split(",");
+        for (String value : values) {
+            if (value.trim().length() != 0) {
+                result.add(value.trim());
+            }
+        }
+        return result;
+    }
+
     public static List<String> getRoleList(String roles) {
         List<String> result = new ArrayList<>();
         String[] rls = roles.split(",");
@@ -99,5 +115,26 @@ public class Utils {
             }
         }
         return result;
+    }
+
+    public static String getScope(String method) {
+        method = method.toUpperCase();
+        String scope = "";
+        switch (method) {
+            case "GET":
+                scope = "read";
+                break;
+            case "POST":
+                scope = "write";
+                break;
+            case "PUT":
+            case "PATCH":
+                scope = "update";
+                break;
+            case "DELETE":
+                scope = "delete";
+                break;
+        }
+        return scope;
     }
 }

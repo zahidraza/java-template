@@ -180,4 +180,13 @@ public class UserRestController {
     public ResponseEntity<?> updateProfile() {
         return null;
     }
+
+    @GetMapping(ApiUrls.URL_USERS_USER_PROFILE)
+    public ResponseEntity<?> getProfile(@RequestParam("username") String username) {
+        User user = userService.getProfile(username);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(userAssembler.toResource(user), HttpStatus.OK);
+    }
 }
