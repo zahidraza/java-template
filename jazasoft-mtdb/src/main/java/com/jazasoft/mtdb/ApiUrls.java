@@ -22,6 +22,9 @@ public class ApiUrls {
     public static final String ROOT_URL_INTERCEPTORS = "/api/interceptors";
     public static final String URL_INTERCEPTORS_INTERCEPTOR = "{interceptorId}";
 
+    public static final String ROOT_URL_INIT = "/api/init";
+    public static final String URL_INIT_MASTER = "/master";
+    public static final String URL_INIT_TENANT = "/tenant";
 
 
 }

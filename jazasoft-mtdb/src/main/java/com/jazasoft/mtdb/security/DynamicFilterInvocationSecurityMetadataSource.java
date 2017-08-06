@@ -85,7 +85,8 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
                 // Every one is allowed access profile|other  resource
                 else if(url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
                         || url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
-                        || url.contains(ApiUrls.URL_USERS_USER_PROFILE)) {
+                        || url.contains(ApiUrls.URL_USERS_USER_PROFILE)
+                        || url.contains(ApiUrls.ROOT_URL_INIT)) {
                     return new ArrayList<>();
                 }
                 //Only Master and Admin are authorized for User,Role,UrlInterceptor Resource

@@ -81,8 +81,12 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
                     sendResponse(res,403,40301,"Forbidden","","");
                     tenantSet =  false;
                 }else {
+
                     if (roles.contains(Constants.ROLE_ADMIN)) {
-                        if (url.contains(ApiUrls.ROOT_URL_USERS) || url.contains(ApiUrls.ROOT_URL_ROLES) || url.contains(ApiUrls.ROOT_URL_INTERCEPTORS)) {
+                        if (url.contains(ApiUrls.ROOT_URL_USERS)
+                            || url.contains(ApiUrls.ROOT_URL_ROLES)
+                            || url.contains(ApiUrls.ROOT_URL_INTERCEPTORS)
+                            || url.contains(ApiUrls.ROOT_URL_INIT + ApiUrls.URL_INIT_MASTER)) {
                             req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, Constants.TENANT_MASTER);
                             req.setAttribute(Constants.CURRENT_TENANT, user.getCompany());
                         }else {
@@ -93,7 +97,8 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
                     else {
                         if(url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
                                 || url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
-                                || url.contains(ApiUrls.URL_USERS_USER_PROFILE)) {
+                                || url.contains(ApiUrls.URL_USERS_USER_PROFILE)
+                                || url.contains(ApiUrls.ROOT_URL_INIT + ApiUrls.URL_INIT_MASTER)) {
 
                             req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, Constants.TENANT_MASTER);
                         }else {
