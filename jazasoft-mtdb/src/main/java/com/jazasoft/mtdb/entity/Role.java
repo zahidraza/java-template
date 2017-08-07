@@ -1,9 +1,11 @@
 package com.jazasoft.mtdb.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.hateoas.core.Relation;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -11,13 +13,14 @@ import java.io.Serializable;
  */
 @Entity
 @Relation(value = "role", collectionRelation = "roles")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Role implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotNull @Size(min = 3, max = 30)
     @Column(nullable = false, unique = true)
     private String name;
 
