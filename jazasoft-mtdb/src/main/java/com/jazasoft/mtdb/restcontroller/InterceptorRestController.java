@@ -8,6 +8,7 @@ import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.entity.UrlInterceptor;
 import com.jazasoft.mtdb.service.CompanyService;
 import com.jazasoft.mtdb.service.InterceptorService;
+import com.jazasoft.util.ValidList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -66,22 +68,24 @@ public class InterceptorRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(HttpServletRequest req, @Valid @RequestBody UrlInterceptor urlInterceptor){
+    public ResponseEntity<?> save(HttpServletRequest req, @Valid @RequestBody ValidList<UrlInterceptor> urlInterceptors){
         Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
         LOGGER.debug("save(): tenant = {}", company != null ? company.getName() : "");
         if (company != null) {
-            urlInterceptor.setCompany(company);
+            urlInterceptors.forEach(urlInterceptor -> urlInterceptor.setCompany(company));
         }else {
-            if (urlInterceptor.getCompanyId() != null && !companyService.exists(urlInterceptor.getCompanyId())) {
-                RestError error = new RestError(404, 40401,"Company with Id=" + urlInterceptor.getCompanyId() + " not found","","");
-                return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+            List<RestError> errors = new ArrayList<>();
+            urlInterceptors.forEach(urlInterceptor -> {
+                if (urlInterceptor.getCompanyId() != null && !companyService.exists(urlInterceptor.getCompanyId())) {
+                    RestError error = new RestError(404, 40401,"Company with Id=" + urlInterceptor.getCompanyId() + " not found","","");
+                    errors.add(error);
+                }
+            });
+            if (!errors.isEmpty()) {
+                return new ResponseEntity<Object>(errors, HttpStatus.BAD_REQUEST);
             }
         }
-        urlInterceptor = urlInterceptorService.save(urlInterceptor);
-        Link selfLink = linkTo(InterceptorRestController.class).slash(urlInterceptor.getId()).withSelfRel();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create(selfLink.getHref()));
-        return new ResponseEntity<>(urlInterceptorAssembler.toResource(urlInterceptor), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(urlInterceptorAssembler.toResources(urlInterceptorService.save(urlInterceptors)), HttpStatus.CREATED);
     }
 
     @PutMapping(ApiUrls.URL_INTERCEPTORS_INTERCEPTOR)

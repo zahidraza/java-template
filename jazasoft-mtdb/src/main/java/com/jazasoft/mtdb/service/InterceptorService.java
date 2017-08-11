@@ -56,6 +56,15 @@ public class InterceptorService {
         return urlInterceptorRepository.findByCompanyAndUrl(company,url);
     }
 
+    public List<UrlInterceptor> save(List<UrlInterceptor> urlInterceptorList) {
+        urlInterceptorList.forEach(urlInterceptor -> {
+            if (urlInterceptor.getCompanyId() != null) {
+                urlInterceptor.setCompany(companyRepository.findOne(urlInterceptor.getCompanyId()));
+            }
+        });
+        return urlInterceptorRepository.save(urlInterceptorList);
+    }
+
     public UrlInterceptor save(UrlInterceptor urlInterceptor) {
         LOGGER.debug("save:");
         if (urlInterceptor.getCompanyId() != null) {

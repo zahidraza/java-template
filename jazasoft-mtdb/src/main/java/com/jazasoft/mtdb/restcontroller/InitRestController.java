@@ -67,6 +67,10 @@ public class InitRestController {
         if (role.equalsIgnoreCase(Constants.ROLE_MASTER)) {
             response.put("tenants", companyAssembler.toResources(companyService.findAll()));
             response.put("users", userAssembler.toResources(userService.findAll()));
+            List<Role> roles = roleService.findAll();
+            roles.add(roleService.findOne(1L));  //Master Role
+            roles.add(roleService.findOne(2L));  //Admin Role
+            response.put("roles", roleAssembler.toResources(roles));
         }else if (role.equalsIgnoreCase(Constants.ROLE_ADMIN)) {
             //userService.findByEmail()
             response.put("users", userAssembler.toResources(userService.findAllByCompanyAfter(company, 0L)));
