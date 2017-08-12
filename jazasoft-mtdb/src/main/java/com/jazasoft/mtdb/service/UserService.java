@@ -6,6 +6,7 @@ import com.jazasoft.mtdb.UserCreatedEvent;
 import com.jazasoft.mtdb.dto.Permission;
 import com.jazasoft.mtdb.dto.UserDto;
 import com.jazasoft.mtdb.entity.Company;
+import com.jazasoft.mtdb.entity.Role;
 import com.jazasoft.mtdb.entity.UrlInterceptor;
 import com.jazasoft.mtdb.entity.User;
 import com.jazasoft.mtdb.repository.CompanyRepository;
@@ -149,14 +150,34 @@ public class UserService implements ApplicationEventPublisherAware {
             user.setCompany(companyRepository.findOne(user.getCompanyId()));
         }
         if (user.getRoles() != null) {
-            Utils.getRoleList(user.getRoles()).stream().forEach(role -> user.addRole(roleRepository.findOneByName("ROLE_"+role).get()));
+            //check for company. Master will send company using comapnyId field. If Master is adding, find role only by name
+            if (user.getCompany() != null && user.getCompanyId() == null) {
+                Utils
+                    .getRoleList(user.getRoles()).stream()
+                    .forEach(role -> user.addRole(roleRepository.findByNameAndCompany("ROLE_"+role, user.getCompany()).orElse(null)));
+            } else {
+                Utils
+                    .getRoleList(user.getRoles()).stream()
+                    .forEach(role -> user.addRole(roleRepository.findOneByName("ROLE_"+role).orElse(null)));
+            }
         }
+
         User user2 = userRepository.save(user);
 
         /* If User is not master publish user created event to add user in tenant user table*/
-        if ( user2.getRoleList().stream().filter(role -> role.getName().equals(Constants.ROLE_MASTER)).count() == 0 && user2.getCompany() != null) {
-            UserCreatedEvent event = new UserCreatedEvent(applicationContext, user2.getId(), user2.getCompany().getDbName());
-            publisher.publishEvent(event);
+        Set<Role> roles = user2.getRoleList();
+        if (!roles.isEmpty()) {
+            //If Role is not master
+            if (roles.stream().filter(role -> role.getName().equals(Constants.ROLE_MASTER)).count() == 0) {
+                if (user2.getCompany() != null) {
+                    UserCreatedEvent event = new UserCreatedEvent(applicationContext, user2.getId(), user2.getCompany().getDbName());
+                    publisher.publishEvent(event);
+                }else {
+                    LOGGER.warn("User does not belong to any company.");
+                }
+            }
+        }else {
+            LOGGER.warn("Saving user without any role.");
         }
         return user2;
     }

@@ -89,11 +89,19 @@ public class UserRestController {
             }
         }
         if (user.getRoles() != null) {
+
             StringBuilder builder = new StringBuilder();
             for(String role: Utils.getRoleList(user.getRoles())){
-                if (!roleService.exists(role)){
-                    builder.append(role).append(",");
+                if (company != null) {
+                    if (!roleService.exists(role, company)){
+                        builder.append(role).append(",");
+                    }
+                }else {
+                    if (!roleService.exists(role)){
+                        builder.append(role).append(",");
+                    }
                 }
+
             }
             if (builder.length() > 0) {
                 builder.setLength(builder.length()-1);

@@ -86,4 +86,8 @@ public class RoleService {
     public boolean exists(String role) {
         return roleRepository.findOneByName("ROLE_" + role).isPresent();
     }
+
+    public boolean exists(String role, Company company) {
+        return roleRepository.findByNameAndCompany("ROLE_" + role, company).isPresent();
+    }
 }
