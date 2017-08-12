@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class InitRestController {
         if (role.equalsIgnoreCase(Constants.ROLE_MASTER)) {
             response.put("tenants", companyAssembler.toResources(companyService.findAll()));
             response.put("users", userAssembler.toResources(userService.findAll()));
-            List<Role> roles = roleService.findAll();
+            List<Role> roles = new ArrayList<>();
             roles.add(roleService.findOne(1L));  //Master Role
             roles.add(roleService.findOne(2L));  //Admin Role
             response.put("roles", roleAssembler.toResources(roles));

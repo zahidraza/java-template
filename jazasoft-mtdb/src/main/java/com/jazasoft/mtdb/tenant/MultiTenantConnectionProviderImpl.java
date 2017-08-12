@@ -91,7 +91,6 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
     @Override
     public DataSource selectDataSource(String tenantIdentifier) {
         LOGGER.info("+++++++++++ Selecting data source for {}", tenantIdentifier);
-        System.out.println(map.containsKey(tenantIdentifier));
         return map.containsKey(tenantIdentifier) ? map.get(tenantIdentifier) : dataSource ;
     }
 
