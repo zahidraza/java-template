@@ -88,19 +88,27 @@ public class InterceptorRestController {
         return new ResponseEntity<>(urlInterceptorAssembler.toResources(urlInterceptorService.save(urlInterceptors)), HttpStatus.CREATED);
     }
 
-    @PutMapping(ApiUrls.URL_INTERCEPTORS_INTERCEPTOR)
-    public ResponseEntity<?> update(HttpServletRequest req, @PathVariable("urlInterceptorId") Long urlInterceptorId, @Valid @RequestBody UrlInterceptor urlInterceptor){
+    @PutMapping
+    public ResponseEntity<?> update(HttpServletRequest req,
+                                    @RequestParam("role") String role,
+                                    @Valid @RequestBody ValidList<UrlInterceptor> urlInterceptors){
         Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
-        LOGGER.debug("update(): tenant = {}, urlInterceptorId = {}", company != null ? company.getName() : "", urlInterceptorId);
-        if (!urlInterceptorService.exists(urlInterceptorId)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        LOGGER.debug("update(): role = {}, tenant = {}",role, company != null ? company.getName() : "");
+        if (company != null) {
+            urlInterceptors.forEach(urlInterceptor -> urlInterceptor.setCompany(company));
+        }else {
+            List<RestError> errors = new ArrayList<>();
+            urlInterceptors.forEach(urlInterceptor -> {
+                if (urlInterceptor.getCompanyId() != null && !companyService.exists(urlInterceptor.getCompanyId())) {
+                    RestError error = new RestError(404, 40401,"Company with Id=" + urlInterceptor.getCompanyId() + " not found","","");
+                    errors.add(error);
+                }
+            });
+            if (!errors.isEmpty()) {
+                return new ResponseEntity<Object>(errors, HttpStatus.BAD_REQUEST);
+            }
         }
-        if (company != null && !urlInterceptorService.exists(company, urlInterceptorId)) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        urlInterceptor.setId(urlInterceptorId);
-        urlInterceptor = urlInterceptorService.update(urlInterceptor);
-        return ResponseEntity.ok(urlInterceptorAssembler.toResource(urlInterceptor));
+        return new ResponseEntity<>(urlInterceptorAssembler.toResources(urlInterceptorService.update(role, urlInterceptors)), HttpStatus.OK);
     }
 
     @DeleteMapping(ApiUrls.URL_INTERCEPTORS_INTERCEPTOR)

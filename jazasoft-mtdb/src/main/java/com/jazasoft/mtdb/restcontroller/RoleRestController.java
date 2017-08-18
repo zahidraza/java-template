@@ -94,6 +94,7 @@ public class RoleRestController {
         if (company != null && !roleService.exists(company, roleId)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+
         role.setId(roleId);
         role = roleService.update(role);
         return ResponseEntity.ok(roleAssembler.toResource(role));

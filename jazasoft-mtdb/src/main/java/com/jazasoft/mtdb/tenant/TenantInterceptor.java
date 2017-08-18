@@ -88,7 +88,6 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
                             || url.contains(ApiUrls.ROOT_URL_INTERCEPTORS)
                             || url.contains(ApiUrls.ROOT_URL_INIT + ApiUrls.URL_INIT_MASTER)) {
                             req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, Constants.TENANT_MASTER);
-                            req.setAttribute(Constants.CURRENT_TENANT, user.getCompany());
                         }else {
                             req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, user.getCompany().getDbName());
                         }
@@ -99,14 +98,14 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
                                 || url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
                                 || url.contains(ApiUrls.URL_USERS_USER_PROFILE)
                                 || url.contains(ApiUrls.ROOT_URL_INIT + ApiUrls.URL_INIT_MASTER)) {
-
                             req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, Constants.TENANT_MASTER);
                         }else {
                             req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, user.getCompany().getDbName());
                         }
                     }
-                    req.setAttribute(Constants.CURRENT_USER, user.getId());
+                    req.setAttribute(Constants.CURRENT_TENANT, user.getCompany());
                     req.setAttribute(Constants.CURRENT_TENANT_ID, user.getCompany().getId());
+                    req.setAttribute(Constants.CURRENT_USER, user.getId());
                 }
             }
         }

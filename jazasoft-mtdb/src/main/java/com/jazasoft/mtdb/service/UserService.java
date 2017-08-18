@@ -50,20 +50,18 @@ public class UserService implements ApplicationEventPublisherAware {
 
     ApplicationContext applicationContext;
 
-    ResourceService resourceService;
 //
 //    @PersistenceContext
 //    EntityManager entityManager;
 
 
-    public UserService(UserRepository userRepository, Mapper mapper, CompanyRepository companyRepository, RoleRepository roleRepository, UrlInterceptorRepository interceptorRepository, ApplicationContext applicationContext, ResourceService resourceService) {
+    public UserService(UserRepository userRepository, Mapper mapper, CompanyRepository companyRepository, RoleRepository roleRepository, UrlInterceptorRepository interceptorRepository, ApplicationContext applicationContext) {
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.companyRepository = companyRepository;
         this.roleRepository = roleRepository;
         this.interceptorRepository = interceptorRepository;
         this.applicationContext = applicationContext;
-        this.resourceService = resourceService;
     }
 
     @Override
@@ -79,7 +77,7 @@ public class UserService implements ApplicationEventPublisherAware {
         user.getRoleList().forEach(role -> {
             List<UrlInterceptor> interceptors = interceptorRepository.findByAccess(role.getName());
             //TODO: In case resource overlap for role, access of one will override other
-            permissions.addAll(getPermissions(interceptors));
+            permissions.addAll(Utils.getPermissions(interceptors));
         });
         user.setPermissions(permissions);
         return user;
@@ -95,7 +93,7 @@ public class UserService implements ApplicationEventPublisherAware {
         user.getRoleList().forEach(role -> {
             List<UrlInterceptor> interceptors = interceptorRepository.findByAccess(role.getName());
             //TODO: In case resource overlap for role, access of one will override other
-            permissions.addAll(getPermissions(interceptors));
+            permissions.addAll(Utils.getPermissions(interceptors));
         });
         user.setPermissions(permissions);
         return user;
@@ -252,27 +250,5 @@ public class UserService implements ApplicationEventPublisherAware {
 //            System.out.println("modifiedBy = " + entity.getUsername());
 //        }
 //    }
-
-    private Set<Permission> getPermissions(List<UrlInterceptor> interceptors) {
-        Set<Permission> permissions = new HashSet<>();
-        Map<String, String> map = new HashMap<>();
-        interceptors.forEach(interceptor -> {
-            String res = resourceService.getResource(interceptor.getUrl());
-
-            String scope = map.get(res);
-            if (scope == null) {
-                map.put(res, Utils.getScope(interceptor.getHttpMethod()));
-            }else {
-                scope = scope + "," + Utils.getScope(interceptor.getHttpMethod());
-                map.put(res, scope);
-            }
-        });
-
-        map.forEach((key, value) -> {
-            permissions.add(new Permission(key, Utils.getListFromCsv(value).stream().collect(Collectors.toSet())));
-        });
-        return permissions;
-    }
-
 
 }

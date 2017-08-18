@@ -88,4 +88,19 @@ public class UrlInterceptor implements Serializable {
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UrlInterceptor)) return false;
+
+        UrlInterceptor that = (UrlInterceptor) o;
+
+        return getId().equals(that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }

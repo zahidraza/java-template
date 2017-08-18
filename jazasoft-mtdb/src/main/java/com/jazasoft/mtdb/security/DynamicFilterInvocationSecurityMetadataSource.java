@@ -52,6 +52,9 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
         String url = fi.getRequestUrl();
         String httpMethod = fi.getRequest().getMethod();
 
+        if (url.equals("/") || url.startsWith("/static/")) {
+            return new ArrayList<>();
+        }
         Principal principal = fi.getHttpRequest().getUserPrincipal();
         if (principal != null) {
             User user = userService.findByUsername(principal.getName());

@@ -1,12 +1,17 @@
 package com.jazasoft.mtdb.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.jazasoft.mtdb.dto.Permission;
 import org.springframework.hateoas.core.Relation;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by mdzahidraza on 26/06/17.
@@ -33,6 +38,9 @@ public class Role implements Serializable{
     @Transient
     private Long companyId;
 
+    @Transient
+    private Set<Permission> permissions = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -54,7 +62,7 @@ public class Role implements Serializable{
     }
 
     public void setName(String name) {
-        this.name = "ROLE_" + name;
+        this.name = name;
     }
 
     public String getDescription() {
@@ -79,6 +87,14 @@ public class Role implements Serializable{
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
+    }
+
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
     }
 
     @Override

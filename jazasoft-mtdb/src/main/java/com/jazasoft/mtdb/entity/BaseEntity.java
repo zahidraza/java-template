@@ -21,7 +21,7 @@ public class BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     protected Date modifiedAt;
 
-    protected boolean enabled;
+    protected Boolean enabled;
 
     public BaseEntity() {
     }
@@ -56,10 +56,11 @@ public class BaseEntity {
     }
 
     public boolean isEnabled() {
+        if (enabled == null) return false;
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,6 +72,29 @@ public class InterceptorService {
             urlInterceptor.setCompany(companyRepository.findOne(urlInterceptor.getCompanyId()));
         }
         return urlInterceptorRepository.save(urlInterceptor);
+    }
+
+    public List<UrlInterceptor> update(String role, List<UrlInterceptor> list1) {
+        LOGGER.debug("update: role: {}", role);
+        List<UrlInterceptor> list2 = urlInterceptorRepository.findByAccess(role);
+        List<UrlInterceptor> deleteList = new ArrayList<>();
+        List<UrlInterceptor> result = new ArrayList<>();
+
+//        for (UrlInterceptor urlInterceptor: list2) {
+//            //Check if it is deleted
+//            if (!list1.contains(urlInterceptor) ){
+//                LOGGER.info("check 1");
+//                deleteList.add(urlInterceptor);
+//            }else {
+//                LOGGER.info("check 2");
+//                UrlInterceptor src = list1.stream().filter(urlInterceptor1 -> urlInterceptor1.getId().equals(urlInterceptor.getId())).findAny().orElse(null);
+//                mapper.map(src, urlInterceptor);
+//                result.add(urlInterceptor);
+//            }
+//        }
+        urlInterceptorRepository.deleteInBatch(list2);
+        result = urlInterceptorRepository.save(list1);
+        return result;
     }
 
     public UrlInterceptor update(UrlInterceptor urlInterceptor) {

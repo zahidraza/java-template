@@ -11,6 +11,10 @@
     <mapping map-null="false">
         <class-a>com.jazasoft.mtdb.entity.Role</class-a>
         <class-b>com.jazasoft.mtdb.entity.Role</class-b>
+        <field-exclude>
+            <a>company</a>
+            <b>company</b>
+        </field-exclude>
     </mapping>
     <mapping map-null="false">
         <class-a>com.jazasoft.mtdb.entity.UrlInterceptor</class-a>

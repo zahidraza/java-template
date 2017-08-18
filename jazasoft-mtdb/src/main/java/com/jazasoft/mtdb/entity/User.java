@@ -139,10 +139,7 @@ public class User extends BaseEntity implements UserDetails{
         return !credentialExpired;
     }
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+
 
     public void addRole(Role role){
         roleList.add(role);
