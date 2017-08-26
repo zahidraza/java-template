@@ -37,9 +37,9 @@ INSERT INTO users (id, modified_at, enabled, account_expired, account_locked, cr
 SELECT pg_catalog.setval('users_id_seq', 1, true);
 
 --
--- Data for Name: user_role; Type: TABLE DATA; Schema: public; Owner: mdzahidraza
+-- Data for Name: user_role_rel; Type: TABLE DATA; Schema: public; Owner: mdzahidraza
 --
 
-INSERT INTO user_role (user_id, role_id) VALUES
+INSERT INTO user_role_rel (user_id, role_id) VALUES
 (1,	1);
 

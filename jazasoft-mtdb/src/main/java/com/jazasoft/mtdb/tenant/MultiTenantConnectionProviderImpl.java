@@ -48,16 +48,18 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
 
     @Value("${spring.datasource.url}")
     private String url;
-
+    @Value("${spring.datasource.host}")
+    private String host;
+    @Value("${spring.datasource.port}")
+    private String port;
+    @Value("${spring.datasource.masterdb}")
+    private String masterdb;
     @Value("${spring.datasource.driverClassName}")
     private String driverClassName;
-
     @Value("${spring.datasource.username}")
     private String user;
-
     @Value("${spring.datasource.password}")
     private String password;
-
     @Value("${spring.datasource.platform}")
     private String platform;
 
@@ -140,7 +142,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
         schemaFile = Utils.getAppHome() + File.separator + "conf" + File.separator + schemaFile;
         File dir = new File(Utils.getAppHome() + File.separator + "bin");
         LOGGER.info("Executing: {} {} {} {}", script, platform, tenant, schemaFile);
-        int exitCode = ScriptUtils.execute(dir,"/bin/bash", script, platform, tenant, schemaFile, user, password);
+        int exitCode = ScriptUtils.execute(dir,"/bin/bash", script, platform, tenant, schemaFile, user, password, host, port, masterdb);
         if (exitCode == 0) {
             LOGGER.info("Database initialized successfully for tenant = {}", tenant);
         }else {

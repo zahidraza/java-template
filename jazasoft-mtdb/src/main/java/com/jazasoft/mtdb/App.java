@@ -2,6 +2,7 @@ package com.jazasoft.mtdb;
 
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by mdzahidraza on 21/07/17.
  */
-public abstract class App {
+public abstract class App extends SpringBootServletInitializer{
 
     @Bean
     public Mapper dozerBeanMapper() {

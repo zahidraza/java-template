@@ -153,16 +153,16 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
--- Name: user_role; Type: TABLE; Schema: public; Owner: mdzahidraza
+-- Name: user_role_rel; Type: TABLE; Schema: public; Owner: mdzahidraza
 --
 
-CREATE TABLE user_role (
+CREATE TABLE user_role_rel (
     user_id bigint NOT NULL,
     role_id bigint NOT NULL
 );
 
 
-ALTER TABLE user_role OWNER TO mdzahidraza;
+ALTER TABLE user_role_rel OWNER TO mdzahidraza;
 
 
 --
@@ -171,9 +171,10 @@ ALTER TABLE user_role OWNER TO mdzahidraza;
 
 CREATE TABLE url_interceptor (
     id bigint NOT NULL,
-    access character varying(255),
-    http_method character varying(255),
-    url character varying(255)
+    access character varying(255) NOT NULL,
+    http_method character varying(255) NOT NULL,
+    url character varying(255) NOT NULL,
+    company_id bigint
 );
 
 
@@ -282,11 +283,11 @@ ALTER TABLE ONLY url_interceptor
 
 
 --
--- Name: user_role user_role_pkey; Type: CONSTRAINT; Schema: public; Owner: mdzahidraza
+-- Name: user_role_rel user_role_rel_pkey; Type: CONSTRAINT; Schema: public; Owner: mdzahidraza
 --
 
-ALTER TABLE ONLY user_role
-    ADD CONSTRAINT user_role_pkey PRIMARY KEY (user_id, role_id);
+ALTER TABLE ONLY user_role_rel
+    ADD CONSTRAINT user_role_rel_pkey PRIMARY KEY (user_id, role_id);
 
 
 --
@@ -305,10 +306,10 @@ CREATE INDEX idx7516795akd6qg7e0i8e5rv58s ON users USING btree (name, email, use
 
 
 --
--- Name: user_role fka68196081fvovjhkek5m97n3y; Type: FK CONSTRAINT; Schema: public; Owner: mdzahidraza
+-- Name: user_role_rel fka68196081fvovjhkek5m97n3y; Type: FK CONSTRAINT; Schema: public; Owner: mdzahidraza
 --
 
-ALTER TABLE ONLY user_role
+ALTER TABLE ONLY user_role_rel
     ADD CONSTRAINT fka68196081fvovjhkek5m97n3y FOREIGN KEY (role_id) REFERENCES role(id);
 
 
@@ -319,12 +320,19 @@ ALTER TABLE ONLY user_role
 ALTER TABLE ONLY users
     ADD CONSTRAINT fkbwv4uspmyi7xqjwcrgxow361t FOREIGN KEY (company_id) REFERENCES company(id);
 
+--
+-- Name: url_interceptor fk8qjiaq3gndqjgnu1tiuamp079; Type: FK CONSTRAINT; Schema: public; Owner: mdzahidraza
+--
+
+ALTER TABLE ONLY url_interceptor
+    ADD CONSTRAINT fk8qjiaq3gndqjgnu1tiuamp079 FOREIGN KEY (company_id) REFERENCES company(id);
+
 
 --
--- Name: user_role fkj345gk1bovqvfame88rcx7yyx; Type: FK CONSTRAINT; Schema: public; Owner: mdzahidraza
+-- Name: user_role_rel fkj345gk1bovqvfame88rcx7yyx; Type: FK CONSTRAINT; Schema: public; Owner: mdzahidraza
 --
 
-ALTER TABLE ONLY user_role
+ALTER TABLE ONLY user_role_rel
     ADD CONSTRAINT fkj345gk1bovqvfame88rcx7yyx FOREIGN KEY (user_id) REFERENCES users(id);
 
 
