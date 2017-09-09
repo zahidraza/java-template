@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,4 +58,16 @@ public class YamlUtilsTest {
         Assert.assertEquals("schema-postgresql.sql", yamlUtils.getNestedProperty(schema,"postgresql.init.filename"));
     }
 
+    @Test
+    public void testWriteProperties() throws IOException{
+        String filename = Utils.getAppHome() + File.separator + "conf" + File.separator + "output.yml";
+        File outputFile = new File(filename);
+        Map<String, Object> properties = new HashMap<>();
+        List<Contact> list = new ArrayList<>();
+        list.add(new Contact("Md Zahid Raza",25));
+        list.add(new Contact("Md Jawed Akhtar",27));
+        properties.put("contacts", list);
+        properties.put("application","Time And Action Calender");
+        YamlUtils.getInstance().writeProperties(outputFile, properties);
+    }
 }

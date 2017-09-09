@@ -4,7 +4,7 @@ import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.jazasoft.mtdb.dto.Permission;
 import com.jazasoft.mtdb.entity.UrlInterceptor;
-import com.jazasoft.mtdb.service.ResourceService;
+import com.jazasoft.mtdb.service.IResourceService;
 import com.jazasoft.util.YamlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class Utils {
         }
     }
 
-    private static String confFile = getAppHome() + File.separator + "conf" + File.separator + "config.yaml";
+    private static String confFile = getAppHome() + File.separator + "conf" + File.separator + "config.yml";
 
     public static String getAppHome() {
         String aapHome = null;
@@ -82,6 +82,23 @@ public class Utils {
         return YamlUtils.getInstance().getNestedProperty((Map) reader.read(), key);
     }
 
+    /**
+     * Read particular config property for specific tenant
+     * @param tenant
+     * @param key
+     * @return
+     * @throws IOException
+     */
+    public static Object getConfProperty(String tenant, String key) throws IOException {
+        String file = getAppHome() + File.separator + "conf" + File.separator + tenant + ".yml";
+        YamlReader reader = new YamlReader(new FileReader(file));
+        return YamlUtils.getInstance().getNestedProperty((Map) reader.read(), key);
+    }
+
+    public static Object getAllConfigurations(String tenant) throws IOException {
+        String file = getAppHome() + File.separator + "conf" + File.separator + tenant + ".yml";
+        return YamlUtils.getInstance().getProperty(new File(file));
+    }
 
     public static String databaseNameFromJdbcUrl(String url) {
         try {
@@ -154,7 +171,7 @@ public class Utils {
      * @return
      */
     public static Set<Permission> getPermissions(List<UrlInterceptor> interceptors) {
-        ResourceService resourceService = ApplicationContextUtil.getApplicationContext().getBean(ResourceService.class);
+        IResourceService resourceService = ApplicationContextUtil.getApplicationContext().getBean(IResourceService.class);
         Set<Permission> permissions = new HashSet<>();
         Map<String, Set<String>> map = new HashMap<>();
         interceptors.forEach(interceptor -> {
@@ -173,7 +190,7 @@ public class Utils {
         map.forEach((key, value) -> {
             permissions.add(new Permission(key, Utils.getListFromCsv(getCsvFromIterable(value)).stream().collect(Collectors.toSet())));
         });
-        LOGGER.info("perm szie = {}", permissions.size());
+        //LOGGER.info("perm szie = {}", permissions.size());
         return permissions;
     }
     /**
@@ -182,7 +199,7 @@ public class Utils {
      * @return
      */
     public static Set<Permission> getPermissionsAllScope(List<UrlInterceptor> interceptors) {
-        ResourceService resourceService = ApplicationContextUtil.getApplicationContext().getBean(ResourceService.class);
+        IResourceService resourceService = ApplicationContextUtil.getApplicationContext().getBean(IResourceService.class);
         Set<Permission> permissions = new HashSet<>();
         Map<String, String> map = new HashMap<>();
         interceptors.forEach(interceptor -> {

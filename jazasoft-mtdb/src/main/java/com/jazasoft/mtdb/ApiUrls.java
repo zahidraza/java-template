@@ -11,7 +11,14 @@ public class ApiUrls {
     public static final String URL_USERS_USER = "{userId}";
     public static final String URL_USERS_USER_SEARCH_BY_USERNAME = "/search/byUsername";
     public static final String URL_USERS_USER_SEARCH_BY_EMAIL = "/search/byEmail";
-    public static final String URL_USERS_USER_PROFILE = "/profile";
+    public static final String URL_USERS_PROFILE = "/profile";
+    public static final String URL_USERS_USER_CHANGE_PASSWORD = "{userId}/changePassword";
+    public static final String URL_USERS_FORGOT_PASSWORD = "/forgotPassword";
+
+    /* Tenant Specific Resource*/
+    public static final String ROOT_URL_TUSERS = "/api/tUsers";
+    public static final String URL_TUSERS_PRIVILEGE = "/privilege";
+    public static final String URL_TUSERS_TUSER = "/{tUserId}";
 
     public static final String ROOT_URL_ROLES = "/api/roles";
     public static final String URL_ROLES_ROLE = "{roleId}";

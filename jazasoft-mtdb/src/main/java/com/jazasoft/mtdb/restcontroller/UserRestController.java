@@ -26,7 +26,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -184,12 +187,12 @@ public class UserRestController {
         return new ResponseEntity<>(userAssembler.toResource(user), HttpStatus.OK);
     }
 
-    @PutMapping(ApiUrls.URL_USERS_USER_PROFILE)
+    @PutMapping(ApiUrls.URL_USERS_PROFILE)
     public ResponseEntity<?> updateProfile() {
         return null;
     }
 
-    @GetMapping(ApiUrls.URL_USERS_USER_PROFILE)
+    @GetMapping(ApiUrls.URL_USERS_PROFILE)
     public ResponseEntity<?> getProfile(@RequestParam("username") String username) {
         User user = userService.getProfile(username);
         if (user == null) {
@@ -197,4 +200,100 @@ public class UserRestController {
         }
         return new ResponseEntity<>(userAssembler.toResource(user), HttpStatus.OK);
     }
+
+    @PatchMapping(ApiUrls.URL_USERS_PROFILE)
+    public ResponseEntity<?> updateUserProfile(HttpServletRequest req, @RequestParam("userId") long id,@Validated @RequestBody UserDto userDto) {
+        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        logger.debug("updateUser(): tenant ={}, id = {}",company != null ? company.getName() : "", id);
+        if (!userService.exists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (company != null && !userService.exists(company, id)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        userDto.setId(id);
+        User user = userService.update(userDto);
+        return ResponseEntity.ok(userAssembler.toResource(user));
+    }
+
+    @PatchMapping(ApiUrls.URL_USERS_USER_CHANGE_PASSWORD)
+    public ResponseEntity<?> changePassword(@PathVariable("userId") Long userId,
+                                            @RequestParam("oldPassword") String oldPassword,
+                                            @RequestParam("newPassword") String newPassword) {
+        if (!userService.exists(userId)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        boolean result = userService.changePassword(userId, oldPassword, newPassword);
+        Map<String,String> resp = new HashMap<>();
+        if (result) {
+            resp.put("status", "SUCCESS");
+            resp.put("message", "Password Changed Successfully.");
+            return ResponseEntity.ok(resp);
+        }
+        else {
+            resp.put("status", "FAIL");
+            resp.put("message", "Incorrect Credential. Password change failed.");
+            return new ResponseEntity<>(resp, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+
+    // Steps to reset forgot password
+    // operation: SEND_OTP, CONFIRM_OTP, CHANGE_PASSWORD, RESET_PASSWORD
+    // resetMode = EMAIL,  operations: RESET_PASSWORD only or SEND_OTP,CONFIRM_OTP,CHANGE_PASSWORD
+    // resetMode = MOBILE, operations: SEND_OTP,CONFIRM_OTP,CHANGE_PASSWORD
+    // 1. Send OTP (via - mobile or email)      : username or email, resetMode: mobile or email
+    // 2. Confirm OTP                           : username or email, otp
+    // 3. change password                       : username or email, otp, newPassword
+
+    @PatchMapping(ApiUrls.URL_USERS_FORGOT_PASSWORD)
+    public ResponseEntity<?> forgotPassword(@RequestParam(value = "resetMode", defaultValue = "EMAIL") String resetMode,
+                                            @RequestParam("username") String username,
+                                            @RequestParam(value = "operation", defaultValue = "RESET_PASSWORD") String operation,
+                                            @RequestParam(value = "otp",defaultValue = "") String otp,
+                                            @RequestParam(value = "newPassword",defaultValue = "") String newPassword) {
+        Pattern patternResetMode = Pattern.compile("EMAIL|MOBILE");
+        Pattern patternOperations = Pattern.compile("SEND_OTP|CONFIRM_OTP|CHANGE_PASSWORD|RESET_PASSWORD");
+        if (!patternResetMode.matcher(resetMode).matches()) {
+            RestError error = new RestError(400,40002,"Unsupported Password Reset Mode. Reset mode can only be [EMAIL|MOBILE].");
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        if (!patternOperations.matcher(operation).matches()) {
+            RestError error = new RestError(400,40003,"Unsupported operation. Operation can only be [SEND_OTP|CONFIRM_OTP|CHANGE_PASSWORD|RESET_PASSWORD].");
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        User user = userService.findByEmail(username);
+        if (user == null) {
+            user = userService.findByUsername(username);
+            if (user == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
+        Map<String, String> resp = new HashMap<>();
+        if (resetMode.equalsIgnoreCase("EMAIL") && operation.equalsIgnoreCase("RESET_PASSWORD")) {
+            boolean result = userService.emailModeResetPassword(user);
+            if (result) {
+
+                resp.put("status", "SUCCESS");
+                resp.put("message", "Password Reset Successful. New Password has been sent to registered email.");
+                return ResponseEntity.ok(resp);
+            }
+        }
+
+//
+//        if (operation.equalsIgnoreCase("SEND_OTP")) {
+//
+//        }
+//        else if (operation.equalsIgnoreCase("CONFIRM_OTP")) {
+//
+//        }
+//        else if (operation.equalsIgnoreCase("CHANGE_PASSWORD")) {
+//
+//        }
+        resp.put("status", "FAIL");
+        resp.put("message", "Password Reset Unsuccessful. Try again later.");
+        return ResponseEntity.ok(resp);
+    }
+
+
 }

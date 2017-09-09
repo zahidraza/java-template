@@ -3,6 +3,9 @@ package com.jazasoft.mtdb.test;
 import com.jazasoft.mtdb.TenantCreatedEvent;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
+import com.jazasoft.mtdb.service.IConfigurationService;
+import com.jazasoft.mtdb.util.Utils;
+import com.jazasoft.util.YamlUtils;
 import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,8 +46,13 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
 
     private Map<String, DataSource> map; // map holds the companyKey => DataSource
 
+    private String defaultTenant;
+
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private IConfigurationService configurationService;
 
     @Value("${spring.datasource.url}")
     private String url;
@@ -74,6 +84,7 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
             // name with company key to get new database URL
             try {
                 addDatasource(company.getDbName());
+                initDefaultConfiguration(company.getDbName());
             } catch (Exception e) {
                 LOGGER.error("Error in database URL {}", url, e);
             }
@@ -88,15 +99,27 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
 
     @Override
     protected DataSource selectDataSource(String tenantIdentifier) {
-        LOGGER.debug("+++++++++++ Selecting data source for {}", tenantIdentifier);
-        return map.containsKey(tenantIdentifier) ? map.get(tenantIdentifier) : dataSource ;
+        DataSource result;
+        if (defaultTenant != null && map.containsKey(defaultTenant)) {
+            result = map.get(defaultTenant);
+            //defaultTenant = null;
+            return result;
+        } else {
+            result = map.containsKey(tenantIdentifier) ? map.get(tenantIdentifier) : dataSource;
+        }
+        return result;
     }
 
     @Override
     public void onApplicationEvent(TenantCreatedEvent event) {
+        String dbName = event.getDbName();
+        addDatasource(dbName);
+        initDefaultConfiguration(dbName);
+    }
 
-        addDatasource(event.getDbName());
-
+    public void setTenantIdentifier(String tenantIdentifier) {
+        LOGGER.debug("setTenantIdentifier: tenant = {}", tenantIdentifier);
+        this.defaultTenant = tenantIdentifier;
     }
 
     private void addDatasource(String tenantIdentifier) {
@@ -124,7 +147,18 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
         populator.addScript(resource);
         populator.setContinueOnError(false);
         DatabasePopulatorUtils.execute(populator , dataSource);
+    }
 
+    private void initDefaultConfiguration(String tenant) {
+        String filename = Utils.getAppHome() + File.separator + "conf" + File.separator + tenant + ".yml";
+        File file = new File(filename);
+        if (file.exists()) return;
+        LOGGER.info("Initializing default configuration. config file = {}", filename);
+        try {
+            YamlUtils.getInstance().writeProperties(file, configurationService.getDefaultConfiguration());
+        } catch (IOException e) {
+            LOGGER.error("Error occured initializing Default configuration. {}", e.getMessage());
+        }
     }
 
 }

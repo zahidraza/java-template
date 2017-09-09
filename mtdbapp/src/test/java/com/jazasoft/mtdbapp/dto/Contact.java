@@ -10,6 +10,11 @@ public class Contact {
     public Contact() {
     }
 
+    public Contact(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
     public String getName() {
         return name;
     }

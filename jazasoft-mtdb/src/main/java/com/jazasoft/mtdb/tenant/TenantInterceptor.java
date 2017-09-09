@@ -96,8 +96,10 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
                     else {
                         if(url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
                                 || url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
-                                || url.contains(ApiUrls.URL_USERS_USER_PROFILE)
+                                || url.contains(ApiUrls.URL_USERS_PROFILE)
+                                || url.contains("/users/{\\d+}/changePassword")
                                 || url.contains(ApiUrls.ROOT_URL_INIT + ApiUrls.URL_INIT_MASTER)) {
+
                             req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, Constants.TENANT_MASTER);
                         }else {
                             req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, user.getCompany().getDbName());

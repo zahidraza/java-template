@@ -1,6 +1,7 @@
 package com.jazasoft.util;
 
 import com.esotericsoftware.yamlbeans.YamlReader;
+import com.esotericsoftware.yamlbeans.YamlWriter;
 
 import java.io.*;
 import java.util.Map;
@@ -35,6 +36,21 @@ public class YamlUtils {
     }
 
     /**
+     * Read all properties from a file
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public Object getProperty(File file) throws IOException{
+        YamlReader reader = new YamlReader(new FileReader(file));
+        return reader.read();
+    }
+
+    public Object getProperty(String filename) throws IOException{
+        return getProperty(new File(filename));
+    }
+
+    /**
      * Read specific key from particular Input Stream
      * @param is Input Stream to be read
      * @param key key to be read. It can be dot seprated for nested key
@@ -53,5 +69,15 @@ public class YamlUtils {
             root = (Map) root.get(keys[i]);
         }
         return root.get(keys[keys.length-1]);
+    }
+
+    public void writeProperties(File file, Map<String, Object> properties) throws IOException {
+        YamlWriter yamlWriter = new YamlWriter(new FileWriter(file));
+        yamlWriter.write(properties);
+        yamlWriter.close();
+    }
+
+    public void writeProperties(String filename, Map<String, Object> properties) throws IOException {
+        writeProperties(new File(filename), properties);
     }
 }

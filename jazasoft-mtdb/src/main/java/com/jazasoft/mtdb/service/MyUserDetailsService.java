@@ -25,8 +25,6 @@ public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired Mapper mapper;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         LOGGER.trace("Looking for user for {}", username);

@@ -52,7 +52,8 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
         String url = fi.getRequestUrl();
         String httpMethod = fi.getRequest().getMethod();
 
-        if (url.equals("/") || url.startsWith("/static/")) {
+        //Fully public resources
+        if (url.equals("/") || url.startsWith("/static/") || url.contains(ApiUrls.URL_USERS_FORGOT_PASSWORD)) {
             return new ArrayList<>();
         }
         Principal principal = fi.getHttpRequest().getUserPrincipal();
@@ -86,10 +87,14 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
                     }
                 }
                 // Every one is allowed access profile|other  resource
+                // Public but for authenticated users
                 else if(url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
                         || url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
-                        || url.contains(ApiUrls.URL_USERS_USER_PROFILE)
-                        || url.contains(ApiUrls.ROOT_URL_INIT)) {
+                        || url.contains(ApiUrls.URL_USERS_PROFILE)
+                        || url.contains("/users/{\\d+}/changePassword")
+                        || url.contains(ApiUrls.ROOT_URL_INIT)
+                        || url.contains(ApiUrls.ROOT_URL_TUSERS + ApiUrls.URL_TUSERS_PRIVILEGE)) {
+                    logger.debug("Authenticated Public resource.");
                     return new ArrayList<>();
                 }
                 //Only Master and Admin are authorized for User,Role,UrlInterceptor Resource

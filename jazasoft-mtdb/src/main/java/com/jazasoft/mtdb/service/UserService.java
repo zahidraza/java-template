@@ -17,16 +17,18 @@ import com.jazasoft.mtdb.util.Utils;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by mdzahidraza on 26/06/17.
@@ -50,18 +52,22 @@ public class UserService implements ApplicationEventPublisherAware {
 
     ApplicationContext applicationContext;
 
+    IEmailService emailService;
+
 //
 //    @PersistenceContext
 //    EntityManager entityManager;
 
 
-    public UserService(UserRepository userRepository, Mapper mapper, CompanyRepository companyRepository, RoleRepository roleRepository, UrlInterceptorRepository interceptorRepository, ApplicationContext applicationContext) {
+    public UserService(ApplicationEventPublisher publisher, UserRepository userRepository, Mapper mapper, CompanyRepository companyRepository, RoleRepository roleRepository, UrlInterceptorRepository interceptorRepository, ApplicationContext applicationContext, IEmailService emailService) {
+        this.publisher = publisher;
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.companyRepository = companyRepository;
         this.roleRepository = roleRepository;
         this.interceptorRepository = interceptorRepository;
         this.applicationContext = applicationContext;
+        this.emailService = emailService;
     }
 
     @Override
@@ -102,6 +108,11 @@ public class UserService implements ApplicationEventPublisherAware {
     public List<User> findAll() {
         LOGGER.debug("findAll()");
         return userRepository.findAll();
+    }
+
+    public List<User> findAll(List<Long> idList) {
+        LOGGER.debug("findAll()");
+        return userRepository.findAll(idList);
     }
 
     public List<User> findAllAfter(long after) {
@@ -168,7 +179,7 @@ public class UserService implements ApplicationEventPublisherAware {
             //If Role is not master
             if (roles.stream().filter(role -> role.getName().equals(Constants.ROLE_MASTER)).count() == 0) {
                 if (user2.getCompany() != null) {
-                    UserCreatedEvent event = new UserCreatedEvent(applicationContext, user2.getId(), user2.getCompany().getDbName());
+                    UserCreatedEvent event = new UserCreatedEvent(applicationContext, user2.getId(), user2.getName(), user2.getUsername(), user2.getEmail(), user2.getMobile(), user2.getCompany().getDbName());
                     publisher.publishEvent(event);
                 }else {
                     LOGGER.warn("User does not belong to any company.");
@@ -199,7 +210,7 @@ public class UserService implements ApplicationEventPublisherAware {
         user.setEnabled(false);
     }
 
-
+    @Transactional
     public User update(User user){
         User user2 = userRepository.findOne(user.getId());
 
@@ -209,6 +220,44 @@ public class UserService implements ApplicationEventPublisherAware {
         if (user.getMobile() != null) user2.setMobile(user.getMobile());
 
         return user2;
+    }
+
+    public boolean changePassword(Long userId, String oldPassword, String newPassword) {
+        User user = userRepository.findOne(userId);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (encoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(newPassword);
+            return true;
+        }
+        return false;
+    }
+
+    public  boolean emailModeResetPassword(User user) {
+        user = userRepository.findOne(user.getId());
+        String resetPassword = com.jazasoft.util.Utils.getRandomAlphaNemeric(10);
+        String email = user.getEmail();
+        String subject = "Password Reset";
+        String message = "Hello, " + user.getName() + "\n\n" +
+                "New Password: " + resetPassword + "\n\n" +
+                "Please, Do change your password." + "\n\n\n" +
+                "Jaza Software (OPC) Private Limited.";
+        emailService.sendSimpleEmail(new String[]{email}, subject, message);
+        user.setPassword(resetPassword);
+        return true;
+    }
+
+    public boolean sendOtp(User user, String resetMode) {
+
+        return false;
+    }
+
+    public boolean confirmOtp(User user, String otp) {
+        return false;
+    }
+
+    public boolean changeForgotPassword(User user, String otp, String newPassword) {
+
+        return false;
     }
 
 //    public void findLastChangeRevision(Long id) {

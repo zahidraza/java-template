@@ -10,7 +10,6 @@ import com.jazasoft.mtdb.util.Utils;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,10 +27,10 @@ public class RoleService {
     private RoleRepository roleRepository;
     private UrlInterceptorRepository urlInterceptorRepository;
     private CompanyRepository companyRepository;
-    private ResourceService resourceService;
+    private IResourceService resourceService;
     private Mapper mapper;
 
-    public RoleService(RoleRepository roleRepository, UrlInterceptorRepository urlInterceptorRepository, CompanyRepository companyRepository, ResourceService resourceService, Mapper mapper) {
+    public RoleService(RoleRepository roleRepository, UrlInterceptorRepository urlInterceptorRepository, CompanyRepository companyRepository, IResourceService resourceService, Mapper mapper) {
         this.roleRepository = roleRepository;
         this.urlInterceptorRepository = urlInterceptorRepository;
         this.companyRepository = companyRepository;
