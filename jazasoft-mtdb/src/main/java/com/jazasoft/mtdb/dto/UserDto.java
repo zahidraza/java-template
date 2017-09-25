@@ -1,6 +1,7 @@
 package com.jazasoft.mtdb.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jazasoft.mtdb.entity.Company;
 import org.springframework.hateoas.core.Relation;
 
 import javax.validation.constraints.Pattern;
@@ -29,6 +30,8 @@ public class UserDto {
     private String roles;
 
     private Boolean enabled;
+
+    private Company company;
 
     public UserDto() {
     }
@@ -102,6 +105,14 @@ public class UserDto {
 
     public void setRoles(String roles) {
         this.roles = roles;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     @Override

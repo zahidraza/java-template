@@ -259,22 +259,6 @@ ALTER TABLE ONLY role
 
 
 --
--- Name: users uk_6dotkott2kjsp8vw4d0m25fb7; Type: CONSTRAINT; Schema: public; Owner: mdzahidraza
---
-
-ALTER TABLE ONLY users
-    ADD CONSTRAINT uk_6dotkott2kjsp8vw4d0m25fb7 UNIQUE (email);
-
-
---
--- Name: users uk_r43af9ap4edm43mmtq01oddj6; Type: CONSTRAINT; Schema: public; Owner: mdzahidraza
---
-
-ALTER TABLE ONLY users
-    ADD CONSTRAINT uk_r43af9ap4edm43mmtq01oddj6 UNIQUE (username);
-
-
---
 -- Name: url_interceptor url_interceptor_pkey; Type: CONSTRAINT; Schema: public; Owner: mdzahidraza
 --
 
@@ -432,6 +416,12 @@ ALTER TABLE ClientDetails OWNER TO mdzahidraza;
 
 ALTER TABLE ONLY ClientDetails
     ADD CONSTRAINT ClientDetails_pkey PRIMARY KEY (appId);
+
+CREATE UNIQUE INDEX role_per_tenant_unique_idx on role (LOWER(name), company_id);
+
+CREATE UNIQUE INDEX users_username_unique_idx on users (LOWER(username));
+
+CREATE UNIQUE INDEX users_email_unique_idx on users (LOWER(email));
 
 --
 -- PostgreSQL database dump complete

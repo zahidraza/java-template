@@ -7,6 +7,10 @@ public class ApiUrls {
 
     public static final String OAUTH_URL = "/oauth/token";
 
+    public static final String ROOT_URL_LICENSE = "/api/license";
+    public static final String URL_LICENSE_CHECK = "/check";
+    public static final String URL_LICENSE_ACTIVATE = "/activate";
+
     public static final String ROOT_URL_USERS = "/api/users";
     public static final String URL_USERS_USER = "{userId}";
     public static final String URL_USERS_USER_SEARCH_BY_USERNAME = "/search/byUsername";
@@ -24,8 +28,7 @@ public class ApiUrls {
     public static final String URL_ROLES_ROLE = "{roleId}";
     public static final String ROOT_URL_COMPANIES = "/api/companies";
     public static final String URL_COMPANIES_COMPANY = "{companyId}";
-    public static final String ROOT_URL_PRODUCTS = "/api/products";
-    public static final String URL_PRODUCTS_PRODUCT = "{productId}";
+
     public static final String ROOT_URL_INTERCEPTORS = "/api/interceptors";
     public static final String URL_INTERCEPTORS_INTERCEPTOR = "{interceptorId}";
 
@@ -33,5 +36,7 @@ public class ApiUrls {
     public static final String URL_INIT_MASTER = "/master";
     public static final String URL_INIT_TENANT = "/tenant";
 
+    public static final String ROOT_URL_REPORTS = "/api/reports";
+    public static final String URL_REPORTS_COMMON = "/common";
 
 }

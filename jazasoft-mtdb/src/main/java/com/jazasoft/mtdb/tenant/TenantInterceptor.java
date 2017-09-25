@@ -7,6 +7,7 @@ import com.jazasoft.mtdb.Constants;
 import com.jazasoft.mtdb.dto.RestError;
 import com.jazasoft.mtdb.entity.User;
 import com.jazasoft.mtdb.repository.UserRepository;
+import com.jazasoft.mtdb.service.LicenseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

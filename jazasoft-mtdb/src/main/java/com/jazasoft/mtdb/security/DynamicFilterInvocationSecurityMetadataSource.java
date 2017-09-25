@@ -52,6 +52,8 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
         String url = fi.getRequestUrl();
         String httpMethod = fi.getRequest().getMethod();
 
+        System.out.println("-$$$- Inside Resource Filter");
+
         //Fully public resources
         if (url.equals("/") || url.startsWith("/static/") || url.contains(ApiUrls.URL_USERS_FORGOT_PASSWORD)) {
             return new ArrayList<>();
@@ -93,7 +95,9 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
                         || url.contains(ApiUrls.URL_USERS_PROFILE)
                         || url.contains("/users/{\\d+}/changePassword")
                         || url.contains(ApiUrls.ROOT_URL_INIT)
-                        || url.contains(ApiUrls.ROOT_URL_TUSERS + ApiUrls.URL_TUSERS_PRIVILEGE)) {
+                        || url.contains(ApiUrls.ROOT_URL_TUSERS + ApiUrls.URL_TUSERS_PRIVILEGE)
+                        || url.contains(ApiUrls.ROOT_URL_REPORTS + ApiUrls.URL_REPORTS_COMMON)
+                        || url.contains("print")) {
                     logger.debug("Authenticated Public resource.");
                     return new ArrayList<>();
                 }
@@ -144,7 +148,7 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
      *  - IS_AUTHENTICATED_FULLY - With a valid token
      *  - SCOPE_<scope> - Token with a specific scope
      *  - ROLE_<role> - Token's user with specific role
-     * @author mariane.vieira
+     * @author mdzahidraza
      *
      */
     public class DynamicConfigAttribute implements ConfigAttribute {

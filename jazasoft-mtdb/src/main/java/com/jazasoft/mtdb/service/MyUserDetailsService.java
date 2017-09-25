@@ -1,5 +1,6 @@
 package com.jazasoft.mtdb.service;
 
+import com.jazasoft.mtdb.Constants;
 import com.jazasoft.mtdb.entity.User;
 import com.jazasoft.mtdb.repository.UserRepository;
 import org.dozer.Mapper;
@@ -29,16 +30,18 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         LOGGER.trace("Looking for user for {}", username);
         try {
-            Optional<User> user = userRepository.findOneByUsername(username);
-            if (!user.isPresent()) {
-                user = userRepository.findOneByEmail(username);
-                if (!user.isPresent()) {
+            Optional<User> uo = userRepository.findOneByUsername(username);
+            if (!uo.isPresent()) {
+                uo = userRepository.findOneByEmail(username);
+                if (!uo.isPresent()) {
                     LOGGER.info("USER NOT PRESENT for {}", username);
                     throw new UsernameNotFoundException("user not found");
                 }
             }
             LOGGER.trace("Found user for {}", username);
-            return user.get();
+            User user = uo.get();
+            user.setTenant(user.getCompany() != null ? user.getCompany().getDbName() : Constants.TENANT_MASTER);
+            return user;
         } catch (Exception e) {
             LOGGER.error("Error loading user {}", username, e);
         }

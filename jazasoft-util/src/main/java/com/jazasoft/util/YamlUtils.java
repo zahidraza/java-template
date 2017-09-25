@@ -66,8 +66,10 @@ public class YamlUtils {
     public Object getNestedProperty(Map root, String key) {
         String[] keys = key.split("\\.");
         for (int i = 0; i < keys.length-1; i++) {
+            if (root == null) return null;
             root = (Map) root.get(keys[i]);
         }
+        if (root == null) return null;
         return root.get(keys[keys.length-1]);
     }
 

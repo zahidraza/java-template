@@ -1,5 +1,6 @@
 package com.jazasoft.mtdb.security;
 
+import com.jazasoft.mtdb.LicenseCheckFilter;
 import com.jazasoft.mtdb.service.InterceptorService;
 import com.jazasoft.mtdb.service.UserService;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        http.addFilterBefore(new LicenseCheckFilter(),FilterSecurityInterceptor.class);
         http
                 // Since we want the protected resources to be accessible in the UI as well we need
                 // session creation to be allowed (it's disabled by default in 2.0.6)

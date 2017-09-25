@@ -48,15 +48,18 @@ public class Utils {
     private static String confFile = getAppHome() + File.separator + "conf" + File.separator + "config.yml";
 
     public static String getAppHome() {
+        String result = null;
         String aapHome = null;
         try {
             aapHome = (String) getAppProperty("app.home");
-            return System.getenv(aapHome);
+            result =  System.getenv(aapHome);
         } catch (IOException e) {
-            e.printStackTrace();
             LOGGER.error("Define APP HOME environment variable name in application.yml");
         }
-        return null;
+        if (result == null) {
+            throw new RuntimeException("APP HOME Environment variable not defined.");
+        }
+        return result;
     }
 
     /**

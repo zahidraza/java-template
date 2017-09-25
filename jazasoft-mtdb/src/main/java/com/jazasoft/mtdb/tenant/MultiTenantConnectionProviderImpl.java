@@ -6,7 +6,7 @@ import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
 import com.jazasoft.mtdb.service.IConfigurationService;
 import com.jazasoft.mtdb.util.Utils;
-import com.jazasoft.util.ScriptUtils;
+import com.jazasoft.util.ProcessUtils;
 import com.jazasoft.util.YamlUtils;
 import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
 import org.slf4j.Logger;
@@ -162,16 +162,27 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
         schemaFile = Utils.getAppHome() + File.separator + "conf" + File.separator + schemaFile;
         File dir = new File(Utils.getAppHome() + File.separator + "bin");
         LOGGER.info("Executing: {} {} {} {}", script, platform, tenant, schemaFile);
-        int exitCode = ScriptUtils.execute(dir,"/bin/bash", script, platform, tenant, schemaFile, user, password, host, port, masterdb);
-        if (exitCode == 0) {
-            LOGGER.info("Database initialized successfully for tenant = {}", tenant);
-        }else {
-            LOGGER.info("Database initialization failed for tenant = {} with exitCode = {}", tenant,exitCode);
+
+
+        try {
+            Process process = ProcessUtils.createProcess(dir, "/bin/bash", script, platform, tenant, schemaFile, user, password, host, port, masterdb);
+            Map<String, Object> result = ProcessUtils.execute(process);
+            if ((Integer)result.get(ProcessUtils.EXIT_CODE) == 0) {
+                LOGGER.info("Database initialized successfully for tenant = {}", tenant);
+            } else {
+                LOGGER.info("Database initialization failed for tenant = {} with exitCode = {}", tenant,result.get(ProcessUtils.EXIT_CODE));
+                LOGGER.error("console Output = {}", result.get(ProcessUtils.CONSOLE_OUTPUT));
+                LOGGER.error("console Error = {}", result.get(ProcessUtils.CONSOLE_ERROR));
+
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error creating process. error - [{}]", e.getMessage());
         }
 
     }
 
     private void initDefaultConfiguration(String tenant) {
+        LOGGER.debug("initDefaultConfiguration");
         String filename = Utils.getAppHome() + File.separator + "conf" + File.separator + tenant + ".yml";
         File file = new File(filename);
         if (file.exists()) return;

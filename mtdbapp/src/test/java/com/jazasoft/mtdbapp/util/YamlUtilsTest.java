@@ -70,4 +70,10 @@ public class YamlUtilsTest {
         properties.put("application","Time And Action Calender");
         YamlUtils.getInstance().writeProperties(outputFile, properties);
     }
+
+    @Test
+    public void testAbsentKey() throws IOException{
+        String xyz = (String)yamlUtils.getProperty(testFile, "xyz.abc.mnc");
+        Assert.assertNull(xyz);
+    }
 }

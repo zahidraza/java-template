@@ -167,7 +167,7 @@ public class UserService implements ApplicationEventPublisherAware {
             } else {
                 Utils
                     .getRoleList(user.getRoles()).stream()
-                    .forEach(role -> user.addRole(roleRepository.findOneByName("ROLE_"+role).orElse(null)));
+                    .forEach(role -> user.addRole(roleRepository.findByName("ROLE_"+role).stream().findAny().orElse(null)));
             }
         }
 
@@ -198,7 +198,12 @@ public class UserService implements ApplicationEventPublisherAware {
         mapper.map(userDto,user);
         if (userDto.getRoles() != null) {
             user.getRoleList().clear();
-            Utils.getRoleList(user.getRoles()).stream().forEach(role -> user.addRole(roleRepository.findOneByName("ROLE_"+role).get()));
+            if (userDto.getCompany() != null) {
+                Utils.getRoleList(user.getRoles()).stream().forEach(role -> user.addRole(roleRepository.findByNameAndCompany("ROLE_"+role, userDto.getCompany()).get()));
+            }else {
+                Utils.getRoleList(user.getRoles()).stream().forEach(role -> user.addRole(roleRepository.findByName("ROLE_"+role).stream().findAny().get()));
+            }
+
         }
         return user;
     }

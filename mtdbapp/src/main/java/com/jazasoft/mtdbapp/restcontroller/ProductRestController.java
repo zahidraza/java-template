@@ -1,6 +1,7 @@
 package com.jazasoft.mtdbapp.restcontroller;
 
 import com.jazasoft.mtdb.ApiUrls;
+import com.jazasoft.mtdbapp.AppApiUrl;
 import com.jazasoft.mtdbapp.entity.Product;
 import com.jazasoft.mtdbapp.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import java.util.List;
  * Created by mdzahidraza on 28/06/17.
  */
 @RestController
-@RequestMapping(ApiUrls.ROOT_URL_PRODUCTS)
+@RequestMapping(AppApiUrl.ROOT_URL_PRODUCTS)
 public class ProductRestController {
 
     private ProductService productService;

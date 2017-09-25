@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,6 +69,12 @@ public class GenericExceptionHandler {
     		return response(HttpStatus.CONFLICT, 40903, "Deletion restricted to prevent data inconsistency.", e.getRootCause().getMessage(), "");
     	}
         return response(HttpStatus.CONFLICT, 40900, "Operation cannot be performed. Integrity Constraint violated.", e.getRootCause().getMessage(), "");
+    }
+
+    @ExceptionHandler
+    ResponseEntity<?> handleRestTemplateHttpStatusCodeException(HttpStatusCodeException e) {
+        e.printStackTrace();
+        return response(e.getStatusCode(), e.getStatusCode().value(), e.getResponseBodyAsString());
     }
 
     @ExceptionHandler

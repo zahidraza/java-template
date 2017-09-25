@@ -64,6 +64,9 @@ public class User extends BaseEntity implements UserDetails{
     @Transient
     private String roles;
 
+    @Transient
+    private String tenant;
+
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
@@ -249,6 +252,14 @@ public class User extends BaseEntity implements UserDetails{
 
     public void setRoles(String roles) {
         this.roles = roles;
+    }
+
+    public String getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
     }
 
     @Override

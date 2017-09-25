@@ -143,6 +143,7 @@ public class UserRestController {
             }
         }
         userDto.setId(id);
+        userDto.setCompany(company);
         User user = userService.update(userDto);
         return ResponseEntity.ok(userAssembler.toResource(user));
     }

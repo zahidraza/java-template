@@ -44,8 +44,8 @@ public class RoleService {
         return roleRepository.findOne(id);
     }
 
-    public Role findOneByName(String role) {
-        return roleRepository.findOneByName("ROLE_" + role).orElse(null);
+    public Role findAnyByName(String role) {
+        return roleRepository.findByName("ROLE_" + role).stream().findAny().orElse(null);
     }
 
     public List<Role> findAll(){
@@ -105,7 +105,7 @@ public class RoleService {
     }
 
     public boolean exists(String role) {
-        return roleRepository.findOneByName("ROLE_" + role).isPresent();
+        return roleRepository.findByName("ROLE_" + role).stream().findAny().isPresent();
     }
 
     public boolean exists(String role, Company company) {
