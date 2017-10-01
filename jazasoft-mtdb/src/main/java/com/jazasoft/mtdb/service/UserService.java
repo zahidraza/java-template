@@ -246,9 +246,12 @@ public class UserService implements ApplicationEventPublisherAware {
                 "New Password: " + resetPassword + "\n\n" +
                 "Please, Do change your password." + "\n\n\n" +
                 "Jaza Software (OPC) Private Limited.";
-        emailService.sendSimpleEmail(new String[]{email}, subject, message);
-        user.setPassword(resetPassword);
-        return true;
+        boolean result = emailService.sendSimpleEmail(new String[]{email}, subject, message);
+        if (result) {
+            user.setPassword(resetPassword);
+            return true;
+        }
+        return false;
     }
 
     public boolean sendOtp(User user, String resetMode) {

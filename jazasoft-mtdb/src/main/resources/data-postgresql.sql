@@ -18,7 +18,7 @@ INSERT INTO role (id, description, name) VALUES
 -- Name: role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mdzahidraza
 --
 
-SELECT pg_catalog.setval('role_id_seq', 2, true);
+--SELECT pg_catalog.setval('role_id_seq', 2, true);
 
 
 --
@@ -34,7 +34,7 @@ INSERT INTO users (id, modified_at, enabled, account_expired, account_locked, cr
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mdzahidraza
 --
 
-SELECT pg_catalog.setval('users_id_seq', 1, true);
+--SELECT pg_catalog.setval('users_id_seq', 1, true);
 
 --
 -- Data for Name: user_role_rel; Type: TABLE DATA; Schema: public; Owner: mdzahidraza

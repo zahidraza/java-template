@@ -55,7 +55,7 @@ ALTER TABLE company OWNER TO mdzahidraza;
 -- Name: company_id_seq; Type: SEQUENCE; Schema: public; Owner: mdzahidraza
 --
 
-CREATE SEQUENCE company_id_seq
+CREATE SEQUENCE IF NOT EXISTS company_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -90,7 +90,7 @@ ALTER TABLE role OWNER TO mdzahidraza;
 -- Name: role_id_seq; Type: SEQUENCE; Schema: public; Owner: mdzahidraza
 --
 
-CREATE SEQUENCE role_id_seq
+CREATE SEQUENCE IF NOT EXISTS role_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -135,7 +135,7 @@ ALTER TABLE users OWNER TO mdzahidraza;
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: mdzahidraza
 --
 
-CREATE SEQUENCE users_id_seq
+CREATE SEQUENCE IF NOT EXISTS users_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -184,7 +184,7 @@ ALTER TABLE url_interceptor OWNER TO mdzahidraza;
 -- Name: url_interceptor_id_seq; Type: SEQUENCE; Schema: public; Owner: mdzahidraza
 --
 
-CREATE SEQUENCE url_interceptor_id_seq
+CREATE SEQUENCE IF NOT EXISTS url_interceptor_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE

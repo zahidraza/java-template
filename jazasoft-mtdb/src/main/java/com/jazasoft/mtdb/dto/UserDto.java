@@ -15,10 +15,12 @@ public class UserDto {
     @Size(min = 3, max = 50)
     private String name;
 
-    @Pattern(regexp="^(?=.*[a-zA-Z])[a-zA-Z0-9_\\-\\.]{3,50}$")
+    @Size(min = 3, max = 50)
+    @Pattern(regexp="^[a-zA-Z]+[a-zA-Z0-9_.-]*$")
     private String username;
 
-    @Pattern(regexp="^(?=.*[a-zA-Z])[a-zA-Z0-9_\\-@\\.]{5,40}$")
+    @Size(min = 5, max = 50)
+    @Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")
     private String email;
 
     @JsonIgnore

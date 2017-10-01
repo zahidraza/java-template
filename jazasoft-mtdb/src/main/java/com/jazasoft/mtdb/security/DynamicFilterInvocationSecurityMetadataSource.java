@@ -52,8 +52,6 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
         String url = fi.getRequestUrl();
         String httpMethod = fi.getRequest().getMethod();
 
-        System.out.println("-$$$- Inside Resource Filter");
-
         //Fully public resources
         if (url.equals("/") || url.startsWith("/static/") || url.contains(ApiUrls.URL_USERS_FORGOT_PASSWORD)) {
             return new ArrayList<>();

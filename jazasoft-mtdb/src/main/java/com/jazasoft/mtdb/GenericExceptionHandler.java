@@ -20,13 +20,13 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+//@ControllerAdvice
 public class GenericExceptionHandler {
     
-    private final Logger logger = LoggerFactory.getLogger(GenericExceptionHandler.class);
+    protected final Logger logger = LoggerFactory.getLogger(GenericExceptionHandler.class);
 
     @Autowired
-    MessageSource messageSource;
+    protected MessageSource messageSource;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> processValidationError(MethodArgumentNotValidException ex) {
@@ -35,7 +35,7 @@ public class GenericExceptionHandler {
         return new ResponseEntity<>(processFieldError(result.getFieldErrors()), HttpStatus.BAD_REQUEST);
     }
 
-    private List<FieldError> processFieldError(List<org.springframework.validation.FieldError> fieldErrors) {
+    protected List<FieldError> processFieldError(List<org.springframework.validation.FieldError> fieldErrors) {
         List<FieldError> errors = fieldErrors.stream()
                 .map(error -> {
                     if (error.getField().contains("list")) {
@@ -61,34 +61,32 @@ public class GenericExceptionHandler {
     }
 
     @ExceptionHandler
-    ResponseEntity<?> handleConflict(DataIntegrityViolationException e) {
+    public ResponseEntity<?> handleConflict(DataIntegrityViolationException e) {
     	String cause = e.getRootCause().getMessage();
-    	if(cause.toLowerCase().contains("duplicate")){
-    		return response(HttpStatus.CONFLICT, 40901, "Duplicate Entry. Data with same name already exist in database.", e.getRootCause().getMessage(), "");
-    	}else if(cause.toLowerCase().contains("cannot delete")){
+        if(cause.toLowerCase().contains("cannot delete")){
     		return response(HttpStatus.CONFLICT, 40903, "Deletion restricted to prevent data inconsistency.", e.getRootCause().getMessage(), "");
     	}
         return response(HttpStatus.CONFLICT, 40900, "Operation cannot be performed. Integrity Constraint violated.", e.getRootCause().getMessage(), "");
     }
 
-    @ExceptionHandler
-    ResponseEntity<?> handleRestTemplateHttpStatusCodeException(HttpStatusCodeException e) {
-        e.printStackTrace();
-        return response(e.getStatusCode(), e.getStatusCode().value(), e.getResponseBodyAsString());
-    }
+//    @ExceptionHandler
+//    ResponseEntity<?> handleRestTemplateHttpStatusCodeException(HttpStatusCodeException e) {
+//        e.printStackTrace();
+//        return response(e.getStatusCode(), e.getStatusCode().value(), e.getResponseBodyAsString());
+//    }
 
     @ExceptionHandler
-    ResponseEntity<?> handleException(Exception e) {
+    public ResponseEntity<?> handleException(Exception e) {
         logger.debug("handleException: {}",e.getMessage());
         e.printStackTrace();
         return response(HttpStatus.INTERNAL_SERVER_ERROR, 500, e.getMessage(), e.getMessage(), "");
     }
 
-    private ResponseEntity<RestError> response(HttpStatus status, int code, String msg) {
+    protected ResponseEntity<RestError> response(HttpStatus status, int code, String msg) {
         return response(status, code, msg, "", "");
     }
 
-    private ResponseEntity<RestError> response(HttpStatus status, int code, String msg, String devMsg, String moreInfo) {
+    protected ResponseEntity<RestError> response(HttpStatus status, int code, String msg, String devMsg, String moreInfo) {
         return new ResponseEntity<>(new RestError(status.value(), code, msg, devMsg, moreInfo), status);
     }
 

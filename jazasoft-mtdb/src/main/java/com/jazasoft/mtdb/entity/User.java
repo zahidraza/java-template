@@ -27,11 +27,13 @@ public class User extends BaseEntity implements UserDetails{
     @Column(nullable = false)
     private String name;
 
-    @NotNull @Pattern(regexp="^(?=.*[a-zA-Z])[a-zA-Z0-9_\\-\\.]{3,50}$")
+    @NotNull @Size(min = 3, max = 50)
+    @Pattern(regexp="^[a-zA-Z]+[a-zA-Z0-9_.-]*$")
     @Column(nullable = false, unique = true)
     private String username;
 
-    @NotNull @Pattern(regexp="^(?=.*[a-zA-Z])[a-zA-Z0-9_\\-@\\.]{5,50}$")
+    @NotNull @Size(min = 5, max = 50)
+    @Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")
     @Column(nullable = false, unique = true)
     private String email;
 

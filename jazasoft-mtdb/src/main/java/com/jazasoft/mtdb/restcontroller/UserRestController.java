@@ -274,7 +274,6 @@ public class UserRestController {
         if (resetMode.equalsIgnoreCase("EMAIL") && operation.equalsIgnoreCase("RESET_PASSWORD")) {
             boolean result = userService.emailModeResetPassword(user);
             if (result) {
-
                 resp.put("status", "SUCCESS");
                 resp.put("message", "Password Reset Successful. New Password has been sent to registered email.");
                 return ResponseEntity.ok(resp);
