@@ -44,6 +44,24 @@
             <artifactId>org.apache.sling.commons.json</artifactId>
             <version>2.0.20</version>
         </dependency>
+
+        <!--Excel/Csv Processing-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.15</version>
+        </dependency>
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>3.8</version>
+        </dependency>
+        
         <!--Yaml Processing Dependency-->
         <dependency>
             <groupId>com.esotericsoftware.yamlbeans</groupId>
