@@ -301,7 +301,7 @@ public class UserService implements ApplicationEventPublisherAware {
 //    private void printRevision(Revision<Integer,User> revision) {
 //        System.out.println("Revision no = " +revision.getRevisionNumber());
 //        System.out.println("Revision date = " + revision.getRevisionDate());
-//        System.out.println("revision data = " + revision.getEntity());
+//        System.out.println("revision content = " + revision.getEntity());
 //        if (revision.getMetadata().getDelegate() != null){
 //            MyRevisionEntity entity = (MyRevisionEntity)revision.getMetadata().getDelegate();
 //            System.out.println("modifiedBy = " + entity.getUsername());

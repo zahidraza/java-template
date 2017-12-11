@@ -2,7 +2,7 @@ package com.jazasoft.mtdb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jazasoft.mtdb.entity.User;
-import com.jazasoft.mtdb.service.LicenseService;
+import com.jazasoft.mtdb.service.ILicenseService;
 import com.jazasoft.mtdb.util.ApplicationContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class LicenseCheckFilter extends GenericFilterBean {
 
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof User) {
 
-            LicenseService licenseService = ApplicationContextUtil.getApplicationContext().getBean(LicenseService.class);
+            ILicenseService ILicenseService = ApplicationContextUtil.getApplicationContext().getBean(ILicenseService.class);
             User user = (User) authentication.getPrincipal();
 
             if (user.getTenant() != null && !user.getTenant().equalsIgnoreCase(Constants.TENANT_MASTER)) {
@@ -52,14 +52,14 @@ public class LicenseCheckFilter extends GenericFilterBean {
                         filterChain.doFilter(request,response);
                     } else {
                         //If Product license not activated
-                        if (licenseService.getLicense(user.getTenant()) == null) {
+                        if (ILicenseService.getLicense(user.getTenant()) == null) {
                             Map<String, Object> body = new HashMap<>();
                             body.put("status", "PRODUCT_LICENSE_NOT_ACTIVATED");
                             body.put("message", "Product License not activated. Activate Product License first.");
                             writeResponse(resp, body);
                         } else {
                             //If product license expired
-                            if (!licenseService.isLicensed(user.getTenant())) {
+                            if (!ILicenseService.isLicensed(user.getTenant())) {
                                 Map<String, Object> body = new HashMap<>();
                                 body.put("status", "PRODUCT_LICENSE_EXPIRED");
                                 body.put("message", "Product License expired. Renew Product License first.");
@@ -72,14 +72,14 @@ public class LicenseCheckFilter extends GenericFilterBean {
 
                 }else {
                     //If Product license not activated
-                    if (licenseService.getLicense(user.getTenant()) == null) {
+                    if (ILicenseService.getLicense(user.getTenant()) == null) {
                         Map<String, Object> body = new HashMap<>();
                         body.put("status", "PRODUCT_LICENSE_NOT_ACTIVATED");
                         body.put("message", "Product License not activated. Ask Admininistrator to activate Product License.");
                         writeResponse(resp, body);
                     } else {
                         //If product license expired
-                        if (!licenseService.isLicensed(user.getTenant())) {
+                        if (!ILicenseService.isLicensed(user.getTenant())) {
                             Map<String, Object> body = new HashMap<>();
                             body.put("status", "PRODUCT_LICENSE_EXPIRED");
                             body.put("message", "Product License expired. Ask Admininistrator to renew Product License.");

@@ -54,4 +54,9 @@ public class Utils {
                 .build();
         return generator.generate(length);
     }
+
+    public static Double round(Double value, int places) {
+        String format = "%." + places + "f";
+        return Double.parseDouble(String.format(format, value));
+    }
 }

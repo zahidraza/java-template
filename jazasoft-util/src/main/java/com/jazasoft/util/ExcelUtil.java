@@ -81,13 +81,13 @@ public class ExcelUtil {
         return output;
     }
 
-    public static String getCsvFromXls(File file) {
+    public static String getCsvFromXls(File file, int sheetNo) {
         logger.debug("getCsvFromXls()");
         StringBuilder builder = new StringBuilder();
         String output = null;
         try {
             HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(file));
-            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFSheet sheet = wb.getSheetAt(sheetNo);
 
             for (Row row : sheet) {
                 for (int i = 0; i < row.getLastCellNum(); i++) {
@@ -146,6 +146,31 @@ public class ExcelUtil {
         CSVReader reader = null;
 
         csvOutput = getCsvFromXlsx(file,sheetNo);
+        reader = new CSVReader(new StringReader(csvOutput), ';');
+        HeaderColumnNameMappingStrategy<T> strategy = new HeaderColumnNameMappingStrategy<>();
+        strategy.setType(type);
+        CsvToBean<T> csvToBean = new CsvToBean<>();
+
+        return csvToBean.parse(strategy, reader);
+    }
+
+    public static <T> Collection<T> readExcelXls(File file, Class<T> type) {
+        return readExcelXls(file,0,type);
+    }
+
+    /**
+     * Read generic Bean from Excel. Bean must be annotated with header
+     * @param file
+     * @param sheetNo
+     * @param type
+     * @param <T>
+     * @return
+     */
+    public static <T> Collection<T> readExcelXls(File file, int sheetNo, Class<T> type) {
+        String csvOutput = null;
+        CSVReader reader = null;
+
+        csvOutput = getCsvFromXls(file,sheetNo);
         reader = new CSVReader(new StringReader(csvOutput), ';');
         HeaderColumnNameMappingStrategy<T> strategy = new HeaderColumnNameMappingStrategy<>();
         strategy.setType(type);

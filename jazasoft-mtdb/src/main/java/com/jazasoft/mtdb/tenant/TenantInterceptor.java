@@ -7,7 +7,6 @@ import com.jazasoft.mtdb.Constants;
 import com.jazasoft.mtdb.dto.RestError;
 import com.jazasoft.mtdb.entity.User;
 import com.jazasoft.mtdb.repository.UserRepository;
-import com.jazasoft.mtdb.service.LicenseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,8 @@ import java.util.stream.Collectors;
  * Here, Decision about tenant is made
  *
  * General case:
- * For Master role, data should be served from master datasource
- * For Other roles, data should be served from tenant specific datasource
+ * For Master role, content should be served from master datasource
+ * For Other roles, content should be served from tenant specific datasource
  *
  * Special Case:
  * Admin role user may want access to master datasource if resources are: User or Role or UrlInterceptor

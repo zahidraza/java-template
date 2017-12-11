@@ -27,14 +27,12 @@ public class RoleService {
     private RoleRepository roleRepository;
     private UrlInterceptorRepository urlInterceptorRepository;
     private CompanyRepository companyRepository;
-    private IResourceService resourceService;
     private Mapper mapper;
 
-    public RoleService(RoleRepository roleRepository, UrlInterceptorRepository urlInterceptorRepository, CompanyRepository companyRepository, IResourceService resourceService, Mapper mapper) {
+    public RoleService(RoleRepository roleRepository, UrlInterceptorRepository urlInterceptorRepository, CompanyRepository companyRepository, Mapper mapper) {
         this.roleRepository = roleRepository;
         this.urlInterceptorRepository = urlInterceptorRepository;
         this.companyRepository = companyRepository;
-        this.resourceService = resourceService;
         this.mapper = mapper;
     }
 

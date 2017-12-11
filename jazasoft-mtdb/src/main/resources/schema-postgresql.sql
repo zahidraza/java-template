@@ -228,17 +228,17 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 ----------------------
 
+----
+---- Name: revinfo; Type: TABLE; Schema: public; Owner: mdzahidraza
+----
 --
--- Name: revinfo; Type: TABLE; Schema: public; Owner: mdzahidraza
+--CREATE TABLE revinfo (
+--    rev integer NOT NULL,
+--    revtstmp bigint
+--);
 --
-
-CREATE TABLE revinfo (
-    rev integer NOT NULL,
-    revtstmp bigint
-);
-
-
-ALTER TABLE revinfo OWNER TO mdzahidraza;
+--
+--ALTER TABLE revinfo OWNER TO mdzahidraza;
 
 ----------------------
 

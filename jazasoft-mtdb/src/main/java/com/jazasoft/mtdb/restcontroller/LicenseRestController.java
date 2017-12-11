@@ -3,8 +3,7 @@ package com.jazasoft.mtdb.restcontroller;
 import com.jazasoft.mtdb.ApiUrls;
 import com.jazasoft.mtdb.Constants;
 import com.jazasoft.mtdb.dto.License;
-import com.jazasoft.mtdb.service.LicenseService;
-import org.hibernate.annotations.GeneratorType;
+import com.jazasoft.mtdb.service.ILicenseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,10 +22,10 @@ import java.util.Map;
 public class LicenseRestController {
     private final Logger logger = LoggerFactory.getLogger(LicenseRestController.class);
 
-    private LicenseService licenseService;
+    private ILicenseService ILicenseService;
 
-    public LicenseRestController(LicenseService licenseService) {
-        this.licenseService = licenseService;
+    public LicenseRestController(ILicenseService ILicenseService) {
+        this.ILicenseService = ILicenseService;
     }
 
     @PostMapping(ApiUrls.URL_LICENSE_ACTIVATE)
@@ -37,7 +36,7 @@ public class LicenseRestController {
         logger.debug("activate license");
         String tenant = (String) request.getAttribute(Constants.CURRENT_TENANT_IDENTIFIER);
         if (tenant != null) {
-            License license = licenseService.activateLicense(tenant,username,productCode,productKey);
+            License license = ILicenseService.activateLicense(tenant,username,productCode,productKey);
             return ResponseEntity.ok(license);
         }else {
             return new ResponseEntity<>("Tenant not found", HttpStatus.NOT_FOUND);
@@ -49,7 +48,7 @@ public class LicenseRestController {
         logger.debug("activate license");
         String tenant = (String) request.getAttribute(Constants.CURRENT_TENANT_IDENTIFIER);
         if (tenant != null) {
-            License license = licenseService.getLicense(tenant);
+            License license = ILicenseService.getLicense(tenant);
             if (license == null || !license.isActivated()) {
                 Map<String, Object> body = new HashMap<>();
                 body.put("status", "PRODUCT_LICENSE_NOT_ACTIVATED");

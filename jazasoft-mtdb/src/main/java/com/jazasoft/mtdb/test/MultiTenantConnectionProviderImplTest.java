@@ -4,6 +4,7 @@ import com.jazasoft.mtdb.TenantCreatedEvent;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
 import com.jazasoft.mtdb.service.IConfigurationService;
+import com.jazasoft.mtdb.tenant.IMultiTenantConnectionProvider;
 import com.jazasoft.mtdb.util.Utils;
 import com.jazasoft.util.YamlUtils;
 import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
@@ -38,7 +39,7 @@ import java.util.Map;
 @Scope( proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Transactional(value="masterTransactionManager", readOnly = true)
 @Profile("test")
-public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl implements ApplicationListener<TenantCreatedEvent>{
+public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl implements IMultiTenantConnectionProvider, ApplicationListener<TenantCreatedEvent>{
 
     private static final long serialVersionUID = 6246085840652870138L;
 
@@ -93,7 +94,7 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
 
     @Override
     protected DataSource selectAnyDataSource() {
-        LOGGER.debug("######### Selecting any data source");
+        LOGGER.debug("######### Selecting any content source");
         return dataSource;
     }
 
@@ -117,6 +118,7 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
         initDefaultConfiguration(dbName);
     }
 
+    @Override
     public void setTenantIdentifier(String tenantIdentifier) {
         LOGGER.debug("setTenantIdentifier: tenant = {}", tenantIdentifier);
         this.defaultTenant = tenantIdentifier;

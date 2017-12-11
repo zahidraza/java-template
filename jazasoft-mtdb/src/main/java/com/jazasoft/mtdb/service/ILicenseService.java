@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by mdzahidraza on 23/09/17.
  */
-public interface LicenseService {
+public interface ILicenseService {
 
     /**
      * If username, produce code and key are available, keep checking license daily.

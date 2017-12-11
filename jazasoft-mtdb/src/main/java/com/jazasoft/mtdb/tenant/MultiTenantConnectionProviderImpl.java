@@ -37,7 +37,7 @@ import java.util.Map;
 @Scope( proxyMode = ScopedProxyMode.TARGET_CLASS )
 @Transactional(value="masterTransactionManager", readOnly = true)
 @Profile("default")
-public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl implements ApplicationListener<TenantCreatedEvent>{
+public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl implements IMultiTenantConnectionProvider, ApplicationListener<TenantCreatedEvent>{
 
     private static final long serialVersionUID = 6246085840652870138L;
 
@@ -94,7 +94,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
 
     @Override
     protected DataSource selectAnyDataSource() {
-        LOGGER.debug("######### Selecting any data source");
+        LOGGER.debug("######### Selecting any content source");
         return dataSource;
     }
 
@@ -118,6 +118,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
         initDefaultConfiguration(dbName);
     }
 
+    @Override
     public void setTenantIdentifier(String tenantIdentifier) {
         LOGGER.debug("setTenantIdentifier: tenant = {}", tenantIdentifier);
         this.defaultTenant = tenantIdentifier;

@@ -30,7 +30,7 @@ public class CompanyRestController {
     private final Logger logger = LoggerFactory.getLogger(CompanyRestController.class);
 
     @Autowired
-    CompanyService companyService;  //Service which will do all data retrieval/manipulation work
+    CompanyService companyService;  //Service which will do all content retrieval/manipulation work
 
     @Autowired
     CompanyAssembler companyAssembler;

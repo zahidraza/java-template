@@ -4,6 +4,7 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,6 +33,18 @@ public class YamlUtils {
      */
     public Object getProperty(File file, String key) throws IOException{
         YamlReader reader = new YamlReader(new FileReader(file));
+        return getNestedProperty((Map)reader.read(),key);
+    }
+
+    /**
+     * Read specific key from particular file
+     * @param filename Filename to be read
+     * @param key key to be read. It can be dot seprated for nested key
+     * @return  Object which can either String or Map or List, null if not found
+     * @throws IOException
+     */
+    public Object getProperty(String filename, String key) throws IOException{
+        YamlReader reader = new YamlReader(new FileReader(filename));
         return getNestedProperty((Map)reader.read(),key);
     }
 
@@ -74,6 +87,11 @@ public class YamlUtils {
     }
 
     public void writeProperties(File file, Map<String, Object> properties) throws IOException {
+        //Create Empty file if properties is null
+        if (properties == null) {
+            file.createNewFile();
+            return;
+        }
         YamlWriter yamlWriter = new YamlWriter(new FileWriter(file));
         yamlWriter.write(properties);
         yamlWriter.close();
