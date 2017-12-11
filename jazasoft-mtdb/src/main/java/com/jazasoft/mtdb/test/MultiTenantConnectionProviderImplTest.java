@@ -94,7 +94,7 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
 
     @Override
     protected DataSource selectAnyDataSource() {
-        LOGGER.debug("######### Selecting any content source");
+        LOGGER.debug("######### Selecting any data source");
         return dataSource;
     }
 

@@ -25,7 +25,7 @@ public class AbstractStorageService implements StorageService {
     private Path location;
 
     public AbstractStorageService() {
-        String root = Utils.getAppHome() + File.separator + "content";
+        String root = Utils.getAppHome() + File.separator + "data";
         this.rootPath = Paths.get(root);
     }
 

@@ -4,7 +4,7 @@ package com.jazasoft.mtdb;
  * Created by mdzahidraza on 26/06/17.
  */
 public class Constants {
-    public static final String CURRENT_TENANT_IDENTIFIER = "CURRENT_TENANT_IDENTIFIER"; // tenant content base name for datasource selection
+    public static final String CURRENT_TENANT_IDENTIFIER = "CURRENT_TENANT_IDENTIFIER"; // tenant data base name for datasource selection
     public static final String CURRENT_TENANT = "CURRENT_TENANT"; // Current Tenant (Company) Object, for Admin privileged work
     public static final String CURRENT_USER = "CURRENT_USER";   // Current User Id.
     public static final String CURRENT_TENANT_ID = "CURRENT_TENANT_ID"; // Current Tenant (Company) Id

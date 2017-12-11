@@ -42,7 +42,7 @@ public class RoleService {
         return roleRepository.findOne(id);
     }
 
-    public Role findAnyByName(String role) {
+    public Role findOneByName(String role) {
         return roleRepository.findByName("ROLE_" + role).stream().findAny().orElse(null);
     }
 

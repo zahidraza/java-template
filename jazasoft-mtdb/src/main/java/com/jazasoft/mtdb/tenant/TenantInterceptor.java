@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
  * Here, Decision about tenant is made
  *
  * General case:
- * For Master role, content should be served from master datasource
- * For Other roles, content should be served from tenant specific datasource
+ * For Master role, data should be served from master datasource
+ * For Other roles, data should be served from tenant specific datasource
  *
  * Special Case:
  * Admin role user may want access to master datasource if resources are: User or Role or UrlInterceptor

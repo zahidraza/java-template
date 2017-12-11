@@ -94,7 +94,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
 
     @Override
     protected DataSource selectAnyDataSource() {
-        LOGGER.debug("######### Selecting any content source");
+        LOGGER.debug("######### Selecting any data source");
         return dataSource;
     }
 

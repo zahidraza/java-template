@@ -43,7 +43,7 @@ public class UserRestController {
     private final Logger logger = LoggerFactory.getLogger(UserRestController.class);
 
     @Autowired
-    UserService userService;  //Service which will do all content retrieval/manipulation work
+    UserService userService;  //Service which will do all data retrieval/manipulation work
 
     @Autowired
     CompanyService companyService;

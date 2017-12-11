@@ -3,6 +3,7 @@ package com.jazasoft.mtdb.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -26,6 +27,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @Configuration
 @EnableAuthorizationServer
+@Profile("default")
 public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     private static String REALM="MY_OAUTH_REALM";

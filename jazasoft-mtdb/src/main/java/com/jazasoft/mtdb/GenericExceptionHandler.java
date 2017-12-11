@@ -64,7 +64,7 @@ public class GenericExceptionHandler {
     public ResponseEntity<?> handleConflict(DataIntegrityViolationException e) {
     	String cause = e.getRootCause().getMessage();
         if(cause.toLowerCase().contains("cannot delete")){
-    		return response(HttpStatus.CONFLICT, 40903, "Deletion restricted to prevent content inconsistency.", e.getRootCause().getMessage(), "");
+    		return response(HttpStatus.CONFLICT, 40903, "Deletion restricted to prevent data inconsistency.", e.getRootCause().getMessage(), "");
     	}
         return response(HttpStatus.CONFLICT, 40900, "Operation cannot be performed. Integrity Constraint violated.", e.getRootCause().getMessage(), "");
     }
