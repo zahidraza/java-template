@@ -1,6 +1,6 @@
 package com.jazasoft.mtdb.restcontroller;
 
-import com.jazasoft.mtdb.ApiUrls;
+import com.jazasoft.mtdb.IApiUrls;
 import com.jazasoft.mtdb.assember.CompanyAssembler;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.service.CompanyService;
@@ -25,7 +25,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
  * Created by mdzahidraza on 26/06/17.
  */
 @RestController
-@RequestMapping(ApiUrls.ROOT_URL_COMPANIES)
+@RequestMapping(IApiUrls.ROOT_URL_COMPANIES)
 public class CompanyRestController {
     private final Logger logger = LoggerFactory.getLogger(CompanyRestController.class);
 
@@ -43,7 +43,7 @@ public class CompanyRestController {
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
-    @GetMapping(ApiUrls.URL_COMPANIES_COMPANY)
+    @GetMapping(IApiUrls.URL_COMPANIES_COMPANY)
     public ResponseEntity<?> getCompany(@PathVariable("companyId") long id) {
         logger.debug("getCompany(): id = {}",id);
         Company company = companyService.findOne(id);
@@ -63,7 +63,7 @@ public class CompanyRestController {
         return new ResponseEntity<>(companyAssembler.toResource(company), headers, HttpStatus.CREATED);
     }
 
-    @PatchMapping(ApiUrls.URL_COMPANIES_COMPANY)
+    @PatchMapping(IApiUrls.URL_COMPANIES_COMPANY)
     public ResponseEntity<?> updateCompany(@PathVariable("companyId") long id,@Validated @RequestBody Company company) {
         logger.debug("updateCompany(): id = {}",id);
         if (!companyService.exists(id)) {
@@ -74,7 +74,7 @@ public class CompanyRestController {
         return new ResponseEntity<>(companyAssembler.toResource(company), HttpStatus.OK);
     }
 
-    @DeleteMapping(ApiUrls.URL_COMPANIES_COMPANY)
+    @DeleteMapping(IApiUrls.URL_COMPANIES_COMPANY)
     public ResponseEntity<Void> deleteCompany(@PathVariable("companyId") long id) {
         logger.debug("deleteCompany(): id = {}",id);
         if (!companyService.exists(id)) {

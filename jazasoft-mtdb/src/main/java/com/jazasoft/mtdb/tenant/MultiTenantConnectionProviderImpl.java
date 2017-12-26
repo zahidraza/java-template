@@ -1,10 +1,10 @@
 package com.jazasoft.mtdb.tenant;
 
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IConstants;
 import com.jazasoft.mtdb.TenantCreatedEvent;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
-import com.jazasoft.mtdb.service.IConfigurationService;
+import com.jazasoft.mtdb.service.IConfigService;
 import com.jazasoft.mtdb.util.Utils;
 import com.jazasoft.util.ProcessUtils;
 import com.jazasoft.util.YamlUtils;
@@ -26,7 +26,6 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,7 +50,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
     private CompanyRepository companyRepository;
 
     @Autowired
-    private IConfigurationService configurationService;
+    private IConfigService configurationService;
 
     @Value("${spring.datasource.url}")
     private String url;
@@ -146,7 +145,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
         LOGGER.info("initDb");
         String script = null;
         try {
-            script = (String) Utils.getConfProperty(Constants.DB_INIT_SCRIPT_FILENAME_KEY);
+            script = (String) Utils.getConfProperty(IConstants.DB_INIT_SCRIPT_FILENAME_KEY);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -189,7 +188,7 @@ public class MultiTenantConnectionProviderImpl extends AbstractDataSourceBasedMu
         if (file.exists()) return;
         LOGGER.info("Initializing default configuration. config file = {}", filename);
         try {
-            YamlUtils.getInstance().writeProperties(file, configurationService.getDefaultConfiguration());
+            YamlUtils.getInstance().writeProperties(file, configurationService.readDefaultConfigs());
         } catch (IOException e) {
             LOGGER.error("Error occured initializing Default configuration. {}", e.getMessage());
         }

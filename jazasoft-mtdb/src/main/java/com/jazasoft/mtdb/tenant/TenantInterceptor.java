@@ -2,8 +2,8 @@ package com.jazasoft.mtdb.tenant;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jazasoft.mtdb.ApiUrls;
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IApiUrls;
+import com.jazasoft.mtdb.IConstants;
 import com.jazasoft.mtdb.dto.RestError;
 import com.jazasoft.mtdb.entity.User;
 import com.jazasoft.mtdb.repository.UserRepository;
@@ -67,9 +67,9 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
 
             String url = req.getRequestURI();
             List<String> roles = user.getRoleList().stream().map(role -> role.getName()).collect(Collectors.toList());
-            if (roles.contains(Constants.ROLE_MASTER)) {
+            if (roles.contains(IConstants.ROLE_MASTER)) {
                 if (roles.size() == 1) {
-                    req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, Constants.TENANT_MASTER);
+                    req.setAttribute(IConstants.CURRENT_TENANT_IDENTIFIER, IConstants.TENANT_MASTER);
                 }else {
                     LOGGER.warn("ROLE_MASTER cannot have any other roles. possible security breach.");
                     sendResponse(res,403,40301,"Forbidden","","");
@@ -82,32 +82,32 @@ public class TenantInterceptor extends HandlerInterceptorAdapter {
                     tenantSet =  false;
                 }else {
 
-                    if (roles.contains(Constants.ROLE_ADMIN)) {
-                        if (url.contains(ApiUrls.ROOT_URL_USERS)
-                            || url.contains(ApiUrls.ROOT_URL_ROLES)
-                            || url.contains(ApiUrls.ROOT_URL_INTERCEPTORS)
-                            || url.contains(ApiUrls.ROOT_URL_INIT + ApiUrls.URL_INIT_MASTER)) {
-                            req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, Constants.TENANT_MASTER);
+                    if (roles.contains(IConstants.ROLE_ADMIN)) {
+                        if (url.contains(IApiUrls.ROOT_URL_USERS)
+                            || url.contains(IApiUrls.ROOT_URL_ROLES)
+                            || url.contains(IApiUrls.ROOT_URL_INTERCEPTORS)
+                            || url.contains(IApiUrls.ROOT_URL_INIT + IApiUrls.URL_INIT_MASTER)) {
+                            req.setAttribute(IConstants.CURRENT_TENANT_IDENTIFIER, IConstants.TENANT_MASTER);
                         }else {
-                            req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, user.getCompany().getDbName());
+                            req.setAttribute(IConstants.CURRENT_TENANT_IDENTIFIER, user.getCompany().getDbName());
                         }
                     }
                     //Other Users can access master only for profile
                     else {
-                        if(url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
-                                || url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
-                                || url.contains(ApiUrls.URL_USERS_PROFILE)
+                        if(url.contains(IApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
+                                || url.contains(IApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
+                                || url.contains(IApiUrls.URL_USERS_PROFILE)
                                 || url.contains("/users/{\\d+}/changePassword")
-                                || url.contains(ApiUrls.ROOT_URL_INIT + ApiUrls.URL_INIT_MASTER)) {
+                                || url.contains(IApiUrls.ROOT_URL_INIT + IApiUrls.URL_INIT_MASTER)) {
 
-                            req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, Constants.TENANT_MASTER);
+                            req.setAttribute(IConstants.CURRENT_TENANT_IDENTIFIER, IConstants.TENANT_MASTER);
                         }else {
-                            req.setAttribute(Constants.CURRENT_TENANT_IDENTIFIER, user.getCompany().getDbName());
+                            req.setAttribute(IConstants.CURRENT_TENANT_IDENTIFIER, user.getCompany().getDbName());
                         }
                     }
-                    req.setAttribute(Constants.CURRENT_TENANT, user.getCompany());
-                    req.setAttribute(Constants.CURRENT_TENANT_ID, user.getCompany().getId());
-                    req.setAttribute(Constants.CURRENT_USER, user.getId());
+                    req.setAttribute(IConstants.CURRENT_TENANT, user.getCompany());
+                    req.setAttribute(IConstants.CURRENT_TENANT_ID, user.getCompany().getId());
+                    req.setAttribute(IConstants.CURRENT_USER, user.getId());
                 }
             }
         }

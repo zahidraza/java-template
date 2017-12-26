@@ -1,7 +1,7 @@
 package com.jazasoft.mtdb.restcontroller;
 
-import com.jazasoft.mtdb.ApiUrls;
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IApiUrls;
+import com.jazasoft.mtdb.IConstants;
 import com.jazasoft.mtdb.dto.License;
 import com.jazasoft.mtdb.service.ILicenseService;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by mdzahidraza on 23/09/17.
  */
 @RestController
-@RequestMapping(ApiUrls.ROOT_URL_LICENSE)
+@RequestMapping(IApiUrls.ROOT_URL_LICENSE)
 public class LicenseRestController {
     private final Logger logger = LoggerFactory.getLogger(LicenseRestController.class);
 
@@ -28,13 +28,13 @@ public class LicenseRestController {
         this.ILicenseService = ILicenseService;
     }
 
-    @PostMapping(ApiUrls.URL_LICENSE_ACTIVATE)
+    @PostMapping(IApiUrls.URL_LICENSE_ACTIVATE)
     public ResponseEntity<?> activateLicense(@RequestParam("username") String username,
                                              @RequestParam("productCode") String productCode,
                                              @RequestParam("productKey") String productKey,
                                              HttpServletRequest request) {
         logger.debug("activate license");
-        String tenant = (String) request.getAttribute(Constants.CURRENT_TENANT_IDENTIFIER);
+        String tenant = (String) request.getAttribute(IConstants.CURRENT_TENANT_IDENTIFIER);
         if (tenant != null) {
             License license = ILicenseService.activateLicense(tenant,username,productCode,productKey);
             return ResponseEntity.ok(license);
@@ -43,10 +43,10 @@ public class LicenseRestController {
         }
     }
 
-    @GetMapping(ApiUrls.URL_LICENSE_CHECK)
+    @GetMapping(IApiUrls.URL_LICENSE_CHECK)
     public ResponseEntity<?> checkLicense(HttpServletRequest request) {
         logger.debug("activate license");
-        String tenant = (String) request.getAttribute(Constants.CURRENT_TENANT_IDENTIFIER);
+        String tenant = (String) request.getAttribute(IConstants.CURRENT_TENANT_IDENTIFIER);
         if (tenant != null) {
             License license = ILicenseService.getLicense(tenant);
             if (license == null || !license.isActivated()) {

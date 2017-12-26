@@ -1,7 +1,7 @@
 package com.jazasoft.mtdbapp.restcontroller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jazasoft.mtdb.ApiUrls;
+import com.jazasoft.mtdb.IApiUrls;
 import com.jazasoft.mtdbapp.dto.OauthResponse;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class BaseTest {
         params.add("grant_type", "password");
         params.add("username", "zahid7292");
         params.add("password", "admin");
-        MvcResult mvcResult = mvc.perform(post(ApiUrls.OAUTH_URL)
+        MvcResult mvcResult = mvc.perform(post(IApiUrls.OAUTH_URL)
                 .params(params)
                 .header("Authorization", "Basic Y2xpZW50OnNlY3JldA==")
         )
@@ -49,7 +49,7 @@ public class BaseTest {
         params.add("username", "taufeeque8");
         params.add("password", "admin");
         mvcResult = mvc
-                .perform(post(ApiUrls.OAUTH_URL)
+                .perform(post(IApiUrls.OAUTH_URL)
                         .params(params)
                         .header("Authorization", "Basic Y2xpZW50OnNlY3JldA==")
                 )

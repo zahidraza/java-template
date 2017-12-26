@@ -1,7 +1,7 @@
 package com.jazasoft.mtdb.security;
 
-import com.jazasoft.mtdb.ApiUrls;
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IApiUrls;
+import com.jazasoft.mtdb.IConstants;
 import com.jazasoft.mtdb.entity.Role;
 import com.jazasoft.mtdb.entity.UrlInterceptor;
 import com.jazasoft.mtdb.entity.User;
@@ -53,7 +53,7 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
         String httpMethod = fi.getRequest().getMethod();
 
         //Fully public resources
-        if (url.equals("/") || url.startsWith("/static/") || url.contains(ApiUrls.URL_USERS_FORGOT_PASSWORD)) {
+        if (url.equals("/") || url.startsWith("/static/") || url.contains(IApiUrls.URL_USERS_FORGOT_PASSWORD)) {
             return new ArrayList<>();
         }
         Principal principal = fi.getHttpRequest().getUserPrincipal();
@@ -74,8 +74,8 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
 
                 //More Specific Url case at top
                 //Only Master is authorized to acces Company Resource
-                if (url.contains(ApiUrls.ROOT_URL_COMPANIES)) {
-                    if (roles.contains(Constants.ROLE_MASTER)) {
+                if (url.contains(IApiUrls.ROOT_URL_COMPANIES)) {
+                    if (roles.contains(IConstants.ROLE_MASTER)) {
                         if (roles.size() == 1){
                             return getMasterAttribute();
                         }else {
@@ -88,21 +88,21 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
                 }
                 // Every one is allowed access profile|other  resource
                 // Public but for authenticated users
-                else if(url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
-                        || url.contains(ApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
-                        || url.contains(ApiUrls.URL_USERS_PROFILE)
+                else if(url.contains(IApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
+                        || url.contains(IApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
+                        || url.contains(IApiUrls.URL_USERS_PROFILE)
                         || url.contains("/users/{\\d+}/changePassword")
-                        || url.contains(ApiUrls.ROOT_URL_INIT)
-                        || url.contains(ApiUrls.ROOT_URL_TUSERS + ApiUrls.URL_TUSERS_PRIVILEGE)
-                        || url.contains(ApiUrls.ROOT_URL_REPORTS + ApiUrls.URL_REPORTS_COMMON)
+                        || url.contains(IApiUrls.ROOT_URL_INIT)
+                        || url.contains(IApiUrls.ROOT_URL_TUSERS + IApiUrls.URL_TUSERS_PRIVILEGE)
+                        || url.contains(IApiUrls.ROOT_URL_REPORTS + IApiUrls.URL_REPORTS_COMMON)
                         || url.contains("print")) {
                     logger.debug("Authenticated Public resource.");
                     return new ArrayList<>();
                 }
                 //Only Master and Admin are authorized for User,Role,UrlInterceptor Resource
-                else if (url.contains(ApiUrls.ROOT_URL_USERS) || url.contains(ApiUrls.ROOT_URL_ROLES) || url.contains(ApiUrls.ROOT_URL_INTERCEPTORS)){
+                else if (url.contains(IApiUrls.ROOT_URL_USERS) || url.contains(IApiUrls.ROOT_URL_ROLES) || url.contains(IApiUrls.ROOT_URL_INTERCEPTORS)){
                     Collection<ConfigAttribute> attributes = getMasterAttribute();
-                    attributes.add(new DynamicConfigAttribute(Constants.ROLE_ADMIN));
+                    attributes.add(new DynamicConfigAttribute(IConstants.ROLE_ADMIN));
                     return attributes;
                 }
                 // Tenant specific Resource. dynamic role management. Admin will have access to all resources
@@ -118,7 +118,7 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
                             .filter(in -> in.getHttpMethod() == null || in.getHttpMethod().equals(httpMethod))
                             .map(in -> new DynamicConfigAttribute(in.getAccess()))
                             .collect(Collectors.toList());
-                    configAttributes.add(new DynamicConfigAttribute(Constants.ROLE_ADMIN));
+                    configAttributes.add(new DynamicConfigAttribute(IConstants.ROLE_ADMIN));
                     configAttributes.forEach(configAttribute -> LOGGER.debug("Authorized user Roles: " + configAttribute.getAttribute()));
                     return configAttributes;
                 }
@@ -194,12 +194,12 @@ public class DynamicFilterInvocationSecurityMetadataSource extends DefaultFilter
 
     private Collection<ConfigAttribute> getMasterAttribute() {
         Collection<ConfigAttribute> attributes = new ArrayList<>();
-        attributes.add(new DynamicConfigAttribute(Constants.ROLE_MASTER));
+        attributes.add(new DynamicConfigAttribute(IConstants.ROLE_MASTER));
         return attributes;
     }
     private Collection<ConfigAttribute> getAdminAttribute() {
         Collection<ConfigAttribute> attributes = new ArrayList<>();
-        attributes.add(new DynamicConfigAttribute(Constants.ROLE_ADMIN));
+        attributes.add(new DynamicConfigAttribute(IConstants.ROLE_ADMIN));
         return attributes;
     }
 }

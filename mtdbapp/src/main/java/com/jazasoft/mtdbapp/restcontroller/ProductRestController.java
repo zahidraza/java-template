@@ -1,6 +1,6 @@
 package com.jazasoft.mtdbapp.restcontroller;
 
-import com.jazasoft.mtdb.ApiUrls;
+import com.jazasoft.mtdb.IApiUrls;
 import com.jazasoft.mtdbapp.AppApiUrl;
 import com.jazasoft.mtdbapp.entity.Product;
 import com.jazasoft.mtdbapp.service.ProductService;
@@ -31,7 +31,7 @@ public class ProductRestController {
     }
 
 
-    @GetMapping(ApiUrls.URL_USERS_USER)
+    @GetMapping(IApiUrls.URL_USERS_USER)
     public ResponseEntity<?> getProduct(@PathVariable("productId") Long productId){
         Product product = productService.findOne(productId);
         if (product == null) {

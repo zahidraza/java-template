@@ -3,7 +3,7 @@ package com.jazasoft.mtdb.test;
 import com.jazasoft.mtdb.TenantCreatedEvent;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
-import com.jazasoft.mtdb.service.IConfigurationService;
+import com.jazasoft.mtdb.service.IConfigService;
 import com.jazasoft.mtdb.tenant.IMultiTenantConnectionProvider;
 import com.jazasoft.mtdb.util.Utils;
 import com.jazasoft.util.YamlUtils;
@@ -53,7 +53,7 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
     private CompanyRepository companyRepository;
 
     @Autowired
-    private IConfigurationService configurationService;
+    private IConfigService configurationService;
 
     @Value("${spring.datasource.url}")
     private String url;
@@ -157,7 +157,7 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
         if (file.exists()) return;
         LOGGER.info("Initializing default configuration. config file = {}", filename);
         try {
-            YamlUtils.getInstance().writeProperties(file, configurationService.getDefaultConfiguration());
+            YamlUtils.getInstance().writeProperties(file, configurationService.readDefaultConfigs());
         } catch (IOException e) {
             LOGGER.error("Error occured initializing Default configuration. {}", e.getMessage());
         }

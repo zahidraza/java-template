@@ -1,8 +1,8 @@
 package com.jazasoft.mtdb.restcontroller;
 
 
-import com.jazasoft.mtdb.ApiUrls;
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IApiUrls;
+import com.jazasoft.mtdb.IConstants;
 import com.jazasoft.mtdb.assember.UserAssembler;
 import com.jazasoft.mtdb.dto.RestError;
 import com.jazasoft.mtdb.dto.UserDto;
@@ -37,7 +37,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
  * Created by mdzahidraza on 26/06/17.
  */
 @RestController
-@RequestMapping(ApiUrls.ROOT_URL_USERS)
+@RequestMapping(IApiUrls.ROOT_URL_USERS)
 public class UserRestController {
 
     private final Logger logger = LoggerFactory.getLogger(UserRestController.class);
@@ -56,7 +56,7 @@ public class UserRestController {
 
     @GetMapping
     public ResponseEntity<?> listAllUsers(HttpServletRequest req, @RequestParam(value = "after", defaultValue = "0") Long after) {
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         logger.debug("listAllUsers(): tenant = {}", company != null ? company.getName() : "");
         List<User> users;
         if (company != null) {
@@ -68,7 +68,7 @@ public class UserRestController {
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
-    @GetMapping(ApiUrls.URL_USERS_USER)
+    @GetMapping(IApiUrls.URL_USERS_USER)
     public ResponseEntity<?> getUser(HttpServletRequest req, @PathVariable("userId") long id) {
         logger.debug("getUser(): id = {}",id);
         User user = userService.findOne(id);
@@ -80,7 +80,7 @@ public class UserRestController {
 
     @PostMapping
     public ResponseEntity<?> createUser(HttpServletRequest req, @Valid @RequestBody User user) {
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         logger.debug("createUser(): tenant= {}", company != null ? company.getName() : "");
 
         if (company != null) {
@@ -119,9 +119,9 @@ public class UserRestController {
         return new ResponseEntity<>(userAssembler.toResource(user), headers, HttpStatus.CREATED);
     }
 
-    @PatchMapping(ApiUrls.URL_USERS_USER)
+    @PatchMapping(IApiUrls.URL_USERS_USER)
     public ResponseEntity<?> updateUser(HttpServletRequest req, @PathVariable("userId") long id,@Validated @RequestBody UserDto userDto) {
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         logger.debug("updateUser(): tenant ={}, id = {}",company != null ? company.getName() : "", id);
         if (!userService.exists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -148,9 +148,9 @@ public class UserRestController {
         return ResponseEntity.ok(userAssembler.toResource(user));
     }
 
-    @DeleteMapping(ApiUrls.URL_USERS_USER)
+    @DeleteMapping(IApiUrls.URL_USERS_USER)
     public ResponseEntity<Void> deleteUser(HttpServletRequest req, @PathVariable("userId") long id) {
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         logger.debug("deleteUser(): tenant = {} id = {}",company != null ? company.getName() : "",id);
         if (!userService.exists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -162,10 +162,10 @@ public class UserRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping(ApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
+    @GetMapping(IApiUrls.URL_USERS_USER_SEARCH_BY_USERNAME)
     public ResponseEntity<?> searchByName(HttpServletRequest req, @RequestParam("username") String username){
         logger.debug("searchByUsername(): username = {}",username);
-        Long userId = (Long) req.getAttribute(Constants.CURRENT_USER);
+        Long userId = (Long) req.getAttribute(IConstants.CURRENT_USER);
         User user = userService.findByUsername(username);
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -175,10 +175,10 @@ public class UserRestController {
         return new ResponseEntity<>(userAssembler.toResource(user), HttpStatus.OK);
     }
 
-    @GetMapping(ApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
+    @GetMapping(IApiUrls.URL_USERS_USER_SEARCH_BY_EMAIL)
     public ResponseEntity<?> searchByEmail(HttpServletRequest req, @RequestParam("email") String email){
         logger.debug("searchByName(): name = {}",email);
-        Long userId = (Long) req.getAttribute(Constants.CURRENT_USER);
+        Long userId = (Long) req.getAttribute(IConstants.CURRENT_USER);
         User user = userService.findByEmail(email);
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -188,12 +188,12 @@ public class UserRestController {
         return new ResponseEntity<>(userAssembler.toResource(user), HttpStatus.OK);
     }
 
-    @PutMapping(ApiUrls.URL_USERS_PROFILE)
+    @PutMapping(IApiUrls.URL_USERS_PROFILE)
     public ResponseEntity<?> updateProfile() {
         return null;
     }
 
-    @GetMapping(ApiUrls.URL_USERS_PROFILE)
+    @GetMapping(IApiUrls.URL_USERS_PROFILE)
     public ResponseEntity<?> getProfile(@RequestParam("username") String username) {
         User user = userService.getProfile(username);
         if (user == null) {
@@ -202,9 +202,9 @@ public class UserRestController {
         return new ResponseEntity<>(userAssembler.toResource(user), HttpStatus.OK);
     }
 
-    @PatchMapping(ApiUrls.URL_USERS_PROFILE)
+    @PatchMapping(IApiUrls.URL_USERS_PROFILE)
     public ResponseEntity<?> updateUserProfile(HttpServletRequest req, @RequestParam("userId") long id,@Validated @RequestBody UserDto userDto) {
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         logger.debug("updateUser(): tenant ={}, id = {}",company != null ? company.getName() : "", id);
         if (!userService.exists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -217,7 +217,7 @@ public class UserRestController {
         return ResponseEntity.ok(userAssembler.toResource(user));
     }
 
-    @PatchMapping(ApiUrls.URL_USERS_USER_CHANGE_PASSWORD)
+    @PatchMapping(IApiUrls.URL_USERS_USER_CHANGE_PASSWORD)
     public ResponseEntity<?> changePassword(@PathVariable("userId") Long userId,
                                             @RequestParam("oldPassword") String oldPassword,
                                             @RequestParam("newPassword") String newPassword) {
@@ -247,7 +247,7 @@ public class UserRestController {
     // 2. Confirm OTP                           : username or email, otp
     // 3. change password                       : username or email, otp, newPassword
 
-    @PatchMapping(ApiUrls.URL_USERS_FORGOT_PASSWORD)
+    @PatchMapping(IApiUrls.URL_USERS_FORGOT_PASSWORD)
     public ResponseEntity<?> forgotPassword(@RequestParam(value = "resetMode", defaultValue = "EMAIL") String resetMode,
                                             @RequestParam("username") String username,
                                             @RequestParam(value = "operation", defaultValue = "RESET_PASSWORD") String operation,

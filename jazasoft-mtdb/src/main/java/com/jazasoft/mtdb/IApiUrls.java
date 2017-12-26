@@ -3,7 +3,7 @@ package com.jazasoft.mtdb;
 /**
  * Created by mdzahidraza on 26/06/17.
  */
-public class ApiUrls {
+public interface IApiUrls {
 
     public static final String OAUTH_URL = "/oauth/token";
 

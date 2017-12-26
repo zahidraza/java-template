@@ -1,7 +1,7 @@
 package com.jazasoft.mtdb.service;
 
 
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IConstants;
 import com.jazasoft.mtdb.UserCreatedEvent;
 import com.jazasoft.mtdb.dto.Permission;
 import com.jazasoft.mtdb.dto.UserDto;
@@ -177,7 +177,7 @@ public class UserService implements ApplicationEventPublisherAware {
         Set<Role> roles = user2.getRoleList();
         if (!roles.isEmpty()) {
             //If Role is not master
-            if (roles.stream().filter(role -> role.getName().equals(Constants.ROLE_MASTER)).count() == 0) {
+            if (roles.stream().filter(role -> role.getName().equals(IConstants.ROLE_MASTER)).count() == 0) {
                 if (user2.getCompany() != null) {
                     UserCreatedEvent event = new UserCreatedEvent(applicationContext, user2.getId(), user2.getName(), user2.getUsername(), user2.getEmail(), user2.getMobile(), user2.getCompany().getDbName());
                     publisher.publishEvent(event);

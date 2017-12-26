@@ -4,7 +4,7 @@ package com.jazasoft.mtdbapp.restcontroller;
  * Created by mdzahidraza on 23/06/17.
  */
 
-import com.jazasoft.mtdb.ApiUrls;
+import com.jazasoft.mtdb.IApiUrls;
 import com.jazasoft.mtdb.dto.UserDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,27 +31,27 @@ public class UserIntegrationTest extends BaseTest{
 
     @Test
     public void getAllUser() throws Exception{
-        this.mvc.perform(get(ApiUrls.ROOT_URL_USERS).header("Authorization","Bearer " + accessToken1))
+        this.mvc.perform(get(IApiUrls.ROOT_URL_USERS).header("Authorization","Bearer " + accessToken1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$._embedded.users",hasSize(3)))
                 .andExpect(jsonPath("$._embedded.users[0].name",is("Md Zahid Raza")))
                 .andExpect(jsonPath("$._embedded.users[0]._links.self").exists());
 
-        this.mvc.perform(get(ApiUrls.ROOT_URL_USERS).header("Authorization","Bearer " + accessToken2))
+        this.mvc.perform(get(IApiUrls.ROOT_URL_USERS).header("Authorization","Bearer " + accessToken2))
                 .andExpect(status().isForbidden());
     }
 
 
     @Test
     public void getUser() throws Exception{
-        this.mvc.perform(get(ApiUrls.ROOT_URL_USERS +"/1").header("Authorization","Bearer " + accessToken1))
+        this.mvc.perform(get(IApiUrls.ROOT_URL_USERS +"/1").header("Authorization","Bearer " + accessToken1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.name", is("Md Zahid Raza")))
                 .andExpect(jsonPath("$._links.self").exists());
 
-        this.mvc.perform(get(ApiUrls.ROOT_URL_USERS +"/10").header("Authorization","Bearer " + accessToken1))
+        this.mvc.perform(get(IApiUrls.ROOT_URL_USERS +"/10").header("Authorization","Bearer " + accessToken1))
                 .andExpect(status().isNotFound());
     }
 
@@ -60,7 +60,7 @@ public class UserIntegrationTest extends BaseTest{
     public void createAndDeleteUser() throws Exception{
         UserDto user = new UserDto("Test UserDto","test_user", "test@gmail.com","8987525008");
         System.out.println("-$$$-" +mapper.writeValueAsString(user));
-        MvcResult mvcResult = mvc.perform(post(ApiUrls.ROOT_URL_USERS)
+        MvcResult mvcResult = mvc.perform(post(IApiUrls.ROOT_URL_USERS)
                 .content(mapper.writeValueAsString(user))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("Authorization","Bearer " + accessToken1)
@@ -68,27 +68,27 @@ public class UserIntegrationTest extends BaseTest{
                 .andExpect(status().isCreated())
                 .andReturn();
         String locationUri = mvcResult.getResponse().getHeader("Location");
-        assertTrue(locationUri.contains(ApiUrls.ROOT_URL_USERS));
+        assertTrue(locationUri.contains(IApiUrls.ROOT_URL_USERS));
 
         int idx = locationUri.lastIndexOf('/');
         String id = locationUri.substring(idx+1);
 
-        this.mvc.perform(get( ApiUrls.ROOT_URL_USERS +"/{id}",id).header("Authorization","Bearer " + accessToken1))
+        this.mvc.perform(get( IApiUrls.ROOT_URL_USERS +"/{id}",id).header("Authorization","Bearer " + accessToken1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.name", is("Test UserDto")));
 
-        this.mvc.perform(delete(ApiUrls.ROOT_URL_USERS + "/{id}", id).header("Authorization","Bearer " + accessToken1))
+        this.mvc.perform(delete(IApiUrls.ROOT_URL_USERS + "/{id}", id).header("Authorization","Bearer " + accessToken1))
                 .andExpect(status().isNoContent());
 
-        this.mvc.perform(get(ApiUrls.ROOT_URL_USERS + "/{id}", id).header("Authorization","Bearer " + accessToken1))
+        this.mvc.perform(get(IApiUrls.ROOT_URL_USERS + "/{id}", id).header("Authorization","Bearer " + accessToken1))
                 .andExpect(jsonPath("$.enabled", is(false)));
     }
 
     @Test
     public void createUserBadRequest() throws Exception{
         UserDto user = new UserDto();
-        this.mvc.perform(post(ApiUrls.ROOT_URL_USERS)
+        this.mvc.perform(post(IApiUrls.ROOT_URL_USERS)
                 .content(mapper.writeValueAsString(user))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("Authorization","Bearer " + accessToken1)
@@ -98,7 +98,7 @@ public class UserIntegrationTest extends BaseTest{
 
         //Test each fields one by one
         user = new UserDto("","test_user", "test@gmail.com", "8987525008");
-        this.mvc.perform(post(ApiUrls.ROOT_URL_USERS)
+        this.mvc.perform(post(IApiUrls.ROOT_URL_USERS)
                 .content(mapper.writeValueAsString(user))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("Authorization","Bearer " + accessToken1)
@@ -109,7 +109,7 @@ public class UserIntegrationTest extends BaseTest{
                 .andExpect(jsonPath("$[0].message", containsString("length must be between 3")));
 
         user = new UserDto("Md Zahid Raza","test user", "test@gmail.com", "8987525008");
-        this.mvc.perform(post(ApiUrls.ROOT_URL_USERS)
+        this.mvc.perform(post(IApiUrls.ROOT_URL_USERS)
                 .content(mapper.writeValueAsString(user))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("Authorization","Bearer " + accessToken1)
@@ -119,7 +119,7 @@ public class UserIntegrationTest extends BaseTest{
                 .andExpect(jsonPath("$[0].field", is("username")));
 
         user = new UserDto("Md Zahid Raza","test_user", "test", "8987525008");
-        this.mvc.perform(post(ApiUrls.ROOT_URL_USERS)
+        this.mvc.perform(post(IApiUrls.ROOT_URL_USERS)
                 .content(mapper.writeValueAsString(user))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("Authorization","Bearer " + accessToken1)
@@ -131,7 +131,7 @@ public class UserIntegrationTest extends BaseTest{
 
 
         user = new UserDto("Md Zahid Raza","test_user", "test@gmail.com", "8987525");
-        this.mvc.perform(post(ApiUrls.ROOT_URL_USERS)
+        this.mvc.perform(post(IApiUrls.ROOT_URL_USERS)
                 .content(mapper.writeValueAsString(user))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("Authorization","Bearer " + accessToken1)

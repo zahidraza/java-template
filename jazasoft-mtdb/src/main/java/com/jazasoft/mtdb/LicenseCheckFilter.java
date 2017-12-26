@@ -42,12 +42,12 @@ public class LicenseCheckFilter extends GenericFilterBean {
             ILicenseService ILicenseService = ApplicationContextUtil.getApplicationContext().getBean(ILicenseService.class);
             User user = (User) authentication.getPrincipal();
 
-            if (user.getTenant() != null && !user.getTenant().equalsIgnoreCase(Constants.TENANT_MASTER)) {
-                boolean isAdmin = user.getAuthorities().stream().filter(o -> o.getAuthority().equalsIgnoreCase(Constants.ROLE_ADMIN)).count() == 1;
+            if (user.getTenant() != null && !user.getTenant().equalsIgnoreCase(IConstants.TENANT_MASTER)) {
+                boolean isAdmin = user.getAuthorities().stream().filter(o -> o.getAuthority().equalsIgnoreCase(IConstants.ROLE_ADMIN)).count() == 1;
                 if (isAdmin) {
-                    if (req.getRequestURI().contains(ApiUrls.ROOT_URL_LICENSE + ApiUrls.URL_LICENSE_ACTIVATE)
-                            || req.getRequestURI().contains(ApiUrls.ROOT_URL_LICENSE + ApiUrls.URL_LICENSE_CHECK)
-                            || req.getRequestURI().contains(ApiUrls.URL_USERS_PROFILE)
+                    if (req.getRequestURI().contains(IApiUrls.ROOT_URL_LICENSE + IApiUrls.URL_LICENSE_ACTIVATE)
+                            || req.getRequestURI().contains(IApiUrls.ROOT_URL_LICENSE + IApiUrls.URL_LICENSE_CHECK)
+                            || req.getRequestURI().contains(IApiUrls.URL_USERS_PROFILE)
                             ) {
                         filterChain.doFilter(request,response);
                     } else {

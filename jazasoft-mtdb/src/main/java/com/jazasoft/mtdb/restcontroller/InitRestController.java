@@ -1,7 +1,7 @@
 package com.jazasoft.mtdb.restcontroller;
 
-import com.jazasoft.mtdb.ApiUrls;
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IApiUrls;
+import com.jazasoft.mtdb.IConstants;
 import com.jazasoft.mtdb.assember.CompanyAssembler;
 import com.jazasoft.mtdb.assember.RoleAssembler;
 import com.jazasoft.mtdb.assember.UrlInterceptorAssembler;
@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -55,9 +54,9 @@ public class InitRestController {
         this.interceptorAssembler = interceptorAssembler;
     }
 
-    @GetMapping(ApiUrls.URL_INIT_MASTER)
+    @GetMapping(IApiUrls.URL_INIT_MASTER)
     public ResponseEntity<?> initMaster(HttpServletRequest req, @RequestParam("role") String role) {
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         LOGGER.debug("initMaster(): role = {} ", role);
 
         Pattern pattern = Pattern.compile("ROLE_MASTER|ROLE_ADMIN|ROLE_OTHER", Pattern.CASE_INSENSITIVE);
@@ -65,14 +64,14 @@ public class InitRestController {
             return new ResponseEntity<Object>(new RestError(400,402,"value of role can be one of [ROLE_MASTER,ROLE_ADMIN,ROLE_OTHER]"), HttpStatus.BAD_REQUEST);
         }
         Map<String, Object> response = new HashMap<>();
-        if (role.equalsIgnoreCase(Constants.ROLE_MASTER)) {
+        if (role.equalsIgnoreCase(IConstants.ROLE_MASTER)) {
             response.put("tenants", companyAssembler.toResources(companyService.findAll()));
             response.put("users", userAssembler.toResources(userService.findAll()));
             List<Role> roles = new ArrayList<>();
             roles.add(roleService.findOne(1L));  //Master Role
             roles.add(roleService.findOne(2L));  //Admin Role
             response.put("roles", roleAssembler.toResources(roles));
-        }else if (role.equalsIgnoreCase(Constants.ROLE_ADMIN)) {
+        }else if (role.equalsIgnoreCase(IConstants.ROLE_ADMIN)) {
             //userService.findByEmail()
             response.put("users", userAssembler.toResources(userService.findAllByCompanyAfter(company, 0L)));
             List<Role> roles = roleService.findAll(company);

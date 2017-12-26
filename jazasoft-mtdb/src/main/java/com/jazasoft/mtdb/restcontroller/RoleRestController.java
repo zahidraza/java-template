@@ -1,7 +1,7 @@
 package com.jazasoft.mtdb.restcontroller;
 
-import com.jazasoft.mtdb.ApiUrls;
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IApiUrls;
+import com.jazasoft.mtdb.IConstants;
 import com.jazasoft.mtdb.assember.RoleAssembler;
 import com.jazasoft.mtdb.dto.RestError;
 import com.jazasoft.mtdb.entity.Company;
@@ -29,7 +29,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
  * Created by mdzahidraza on 26/06/17.
  */
 @RestController
-@RequestMapping(ApiUrls.ROOT_URL_ROLES)
+@RequestMapping(IApiUrls.ROOT_URL_ROLES)
 public class RoleRestController {
     private final Logger LOGGER = LoggerFactory.getLogger(RoleRestController.class);
 
@@ -44,16 +44,16 @@ public class RoleRestController {
 
     @GetMapping
     public ResponseEntity<?> getAllRoles(HttpServletRequest req) {
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         LOGGER.debug("getAllRoles(): tenant = {}", company != null ? company.getName() : "");
         List<Role> roles = roleService.findAll(company);
         Resources resources = new Resources(roleAssembler.toResources(roles), linkTo(RoleRestController.class).withSelfRel());
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
-    @GetMapping(ApiUrls.URL_ROLES_ROLE)
+    @GetMapping(IApiUrls.URL_ROLES_ROLE)
     public ResponseEntity<?> getRole(HttpServletRequest req, @PathVariable("roleId") Long roleId) {
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         LOGGER.debug("getRole(): tenant = {},  roleId = {}", company != null ? company.getName() : "", roleId);
         if (!roleService.exists(roleId)) {
             return ResponseEntity.notFound().build();
@@ -67,7 +67,7 @@ public class RoleRestController {
 
     @PostMapping
     public ResponseEntity<?> save(HttpServletRequest req, @Valid @RequestBody Role role){
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         LOGGER.debug("save(): tenant = {}", company != null ? company.getName() : "");
         if (company != null) {
             role.setCompany(company);
@@ -84,9 +84,9 @@ public class RoleRestController {
         return new ResponseEntity<>(roleAssembler.toResource(role), headers, HttpStatus.CREATED);
     }
 
-    @PutMapping(ApiUrls.URL_ROLES_ROLE)
+    @PutMapping(IApiUrls.URL_ROLES_ROLE)
     public ResponseEntity<?> update(HttpServletRequest req, @PathVariable("roleId") Long roleId, @Valid @RequestBody Role role){
-        Company company = (Company)req.getAttribute(Constants.CURRENT_TENANT);
+        Company company = (Company)req.getAttribute(IConstants.CURRENT_TENANT);
         LOGGER.debug("update(): tenant = {}, roleId = {}", company != null ? company.getName() : "", roleId);
         if (!roleService.exists(roleId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

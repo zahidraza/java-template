@@ -1,11 +1,11 @@
 package com.jazasoft.mtdbapp;
 
-import com.jazasoft.mtdb.ApiUrls;
+import com.jazasoft.mtdb.IApiUrls;
 
 /**
  * Created by mdzahidraza on 22/09/17.
  */
-public class AppApiUrl extends ApiUrls{
+public class AppApiUrl extends IApiUrls {
 
     public static final String ROOT_URL_PRODUCTS = "/api/products";
     public static final String URL_PRODUCTS_PRODUCT = "{productId}";

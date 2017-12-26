@@ -1,6 +1,6 @@
 package com.jazasoft.mtdb.tenant;
 
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IConstants;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +20,13 @@ public class CurrentTennatIdentifierResolverImpl implements CurrentTenantIdentif
         logger.debug("resolveCurrentTenantIdentifier");
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes != null) {
-            String identifier = (String) requestAttributes.getAttribute(Constants.CURRENT_TENANT_IDENTIFIER,
+            String identifier = (String) requestAttributes.getAttribute(IConstants.CURRENT_TENANT_IDENTIFIER,
                     RequestAttributes.SCOPE_REQUEST);
             if (identifier != null) {
                 return identifier;
             }
         }
-        return Constants.UNKNOWN_TENANT;
+        return IConstants.UNKNOWN_TENANT;
     }
 
     @Override

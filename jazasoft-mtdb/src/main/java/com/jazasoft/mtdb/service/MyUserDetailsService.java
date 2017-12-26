@@ -1,9 +1,8 @@
 package com.jazasoft.mtdb.service;
 
-import com.jazasoft.mtdb.Constants;
+import com.jazasoft.mtdb.IConstants;
 import com.jazasoft.mtdb.entity.User;
 import com.jazasoft.mtdb.repository.UserRepository;
-import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class MyUserDetailsService implements UserDetailsService {
             }
             LOGGER.trace("Found user for {}", username);
             User user = uo.get();
-            user.setTenant(user.getCompany() != null ? user.getCompany().getDbName() : Constants.TENANT_MASTER);
+            user.setTenant(user.getCompany() != null ? user.getCompany().getDbName() : IConstants.TENANT_MASTER);
             return user;
         } catch (Exception e) {
             LOGGER.error("Error loading user {}", username, e);

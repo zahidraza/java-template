@@ -13,17 +13,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 //@ControllerAdvice
-public class GenericExceptionHandler {
+public class AbstractExceptionHandler {
     
-    protected final Logger logger = LoggerFactory.getLogger(GenericExceptionHandler.class);
+    protected final Logger logger = LoggerFactory.getLogger(AbstractExceptionHandler.class);
 
     @Autowired
     protected MessageSource messageSource;

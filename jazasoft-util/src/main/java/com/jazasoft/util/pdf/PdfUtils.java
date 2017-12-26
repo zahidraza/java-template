@@ -19,7 +19,7 @@ public class PdfUtils {
                 .collect(Collectors.toList());
         List<Cell> headerList = null;
         if (header != null) {
-            header.stream().map(h -> new Cell(h)).collect(Collectors.toList());
+            headerList = header.stream().map(h -> new Cell(h)).collect(Collectors.toList());
         }
         return getTable(style, data2, headerList);
     }
