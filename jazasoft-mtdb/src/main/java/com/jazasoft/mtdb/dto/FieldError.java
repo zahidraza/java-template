@@ -1,6 +1,12 @@
 package com.jazasoft.mtdb.dto;
 
-public class FieldError {
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class FieldError implements Error{
+    private Integer row;
     private String field;
     private Object rejectedValue;
     private String message;
@@ -13,28 +19,11 @@ public class FieldError {
         this.rejectedValue = rejectedValue;
         this.message = message;
     }
-    
-    public String getField() {
-        return field;
-    }
 
-    public void setField(String field) {
+    public FieldError(Integer row, String field, Object rejectedValue, String message) {
+        this.row = row;
         this.field = field;
-    }
-
-    public Object getRejectedValue() {
-        return rejectedValue;
-    }
-
-    public void setRejectedValue(Object rejectedValue) {
         this.rejectedValue = rejectedValue;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
         this.message = message;
     }
 }
