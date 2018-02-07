@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by mdzahidraza on 21/07/17.
  */
-public abstract class App extends SpringBootServletInitializer{
+public abstract class App extends SpringBootServletInitializer {
 
     @Bean
     public Mapper dozerBeanMapper() {
