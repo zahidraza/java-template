@@ -13,4 +13,7 @@ public interface IConfigKeys {
   public static final String LICENSE_PRODUCT_KEY = "license.product-key";
 
   public static final String LIQUIBASE_TENANT_CHANGELOG = "liquibase.tenant-changelog";
+  public static final String LIQUIBASE_ENABLED = "liquibase.enabled";
+  public static final String LIQUIBASE_TEST_TENANT_CHANGELOG = "liquibase.test.tenant-changelog";
+
 }

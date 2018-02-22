@@ -1,5 +1,6 @@
 package com.jazasoft.mtdb.test;
 
+import com.jazasoft.mtdb.IConfigKeys;
 import com.jazasoft.mtdb.TenantCreatedEvent;
 import com.jazasoft.mtdb.entity.Company;
 import com.jazasoft.mtdb.repository.CompanyRepository;
@@ -7,20 +8,20 @@ import com.jazasoft.mtdb.service.IConfigService;
 import com.jazasoft.mtdb.tenant.IMultiTenantConnectionProvider;
 import com.jazasoft.mtdb.util.Utils;
 import com.jazasoft.util.YamlUtils;
+import liquibase.exception.LiquibaseException;
+import liquibase.integration.spring.SpringLiquibase;
 import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,15 +41,19 @@ import java.util.Map;
 @Scope( proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Transactional(value="masterTransactionManager", readOnly = true)
 @Profile("test")
-public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl implements IMultiTenantConnectionProvider, ApplicationListener<TenantCreatedEvent>{
+public class MultiTenantConnectionProviderImplTest
+        extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl
+        implements IMultiTenantConnectionProvider, ApplicationListener<TenantCreatedEvent>, ResourceLoaderAware{
 
     private static final long serialVersionUID = 6246085840652870138L;
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(MultiTenantConnectionProviderImplTest.class);
+    private final static Logger logger = LoggerFactory.getLogger(MultiTenantConnectionProviderImplTest.class);
 
     private Map<String, DataSource> map; // map holds the companyKey => DataSource
 
     private String defaultTenant;
+
+    private ResourceLoader resourceLoader;
 
     @Autowired
     private CompanyRepository companyRepository;
@@ -87,14 +93,14 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
                 addDatasource(company.getDbName());
                 initDefaultConfiguration(company.getDbName());
             } catch (Exception e) {
-                LOGGER.error("Error in database URL {}", url, e);
+                logger.error("Error in database URL {}", url, e);
             }
         }
     }
 
     @Override
     protected DataSource selectAnyDataSource() {
-        LOGGER.debug("######### Selecting any data source");
+        logger.debug("######### Selecting any data source");
         return dataSource;
     }
 
@@ -120,49 +126,96 @@ public class MultiTenantConnectionProviderImplTest extends AbstractDataSourceBas
 
     @Override
     public void setTenantIdentifier(String tenantIdentifier) {
-        LOGGER.debug("setTenantIdentifier: tenant = {}", tenantIdentifier);
+        logger.debug("setTenantIdentifier: tenant = {}", tenantIdentifier);
         this.defaultTenant = tenantIdentifier;
     }
 
     private void addDatasource(String tenantIdentifier) {
-        LOGGER.debug("addDatasource");
-        DataSource dataSource = getDatasource(tenantIdentifier);
+        logger.debug("addDatasource");
+        String dbName = null, url = null, driverClass = null, username = null, password = null;
+        try {
+            InputStream is = this.getClass().getClassLoader().getResourceAsStream("application-test.yml");
+            Map<String, Object> props = (Map<String, Object>)YamlUtils.getInstance().getProperty(is, "test.tenant.datasource");
+            dbName = (String) props.get("db-name");
+            url = (String) props.get("url");
+            driverClass = (String) props.get("driver-class-name");
+            username = (String) props.get("username");
+            password = (String) props.get("password");
+        } catch (IOException e) {
+            logger.error("Unable to read Test Tenant Datasource config. error = {}", e.getMessage());
+            e.printStackTrace();
+        }
+        if (dbName == null || url == null || driverClass == null || username == null || password == null) {
+            throw new RuntimeException("Missing Tenant datasource config.");
+        }
+        if (!tenantIdentifier.trim().equalsIgnoreCase(dbName.trim())) {
+            throw new RuntimeException("Tenant database name do not match in master database and datasource config.");
+        }
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClass);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
         map.put(tenantIdentifier, dataSource);
         initDb(dataSource);
     }
 
-    private DataSource getDatasource(String tenantId) {
-        String newUrl = url.replace("tnt_db_master", tenantId);
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(dataSourceClassName);
-        dataSource.setUrl(newUrl);
-        dataSource.setUsername(user);
-        dataSource.setPassword(password);
-        return dataSource;
-    }
+
+//    private DataSource getDatasource(String tenantId) {
+//        String newUrl = url.replace("tnt_db_master", tenantId);
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName(dataSourceClassName);
+//        dataSource.setUrl(newUrl);
+//        dataSource.setUsername(user);
+//        dataSource.setPassword(password);
+//        return dataSource;
+//    }
 
 
     private void initDb(DataSource dataSource) {
-        LOGGER.info("initDb");
-        Resource resource = new ClassPathResource("h2-schema.sql");
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(resource);
-        populator.setContinueOnError(false);
-        DatabasePopulatorUtils.execute(populator , dataSource);
+        logger.info("initDb");
+        SpringLiquibase liquibase = getLiquibase(dataSource);
+        try {
+            liquibase.afterPropertiesSet();
+        } catch (LiquibaseException e) {
+            logger.error("Unable to perform liquibase migration. error: {}", e.getMessage());
+        }
+    }
+
+    private SpringLiquibase getLiquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        String changeLog = null;
+        try {
+            changeLog = (String) Utils.getConfProperty(IConfigKeys.LIQUIBASE_TEST_TENANT_CHANGELOG);
+        } catch (IOException e) {
+            logger.info("Liquibase Tenant changeLog filename not provided in Config file.");
+        }
+        if (changeLog == null) {
+            logger.info("Using default value for tenant changelog file = 'classpath:/db/changelog-tenant.xml'");
+            changeLog = "classpath:/db/changelog-tenant.xml";
+        }
+        liquibase.setChangeLog(changeLog);
+        liquibase.setResourceLoader(resourceLoader);
+        return liquibase;
     }
 
     private void initDefaultConfiguration(String tenant) {
         String filename = Utils.getAppHome() + File.separator + "conf" + File.separator + tenant + ".yml";
         File file = new File(filename);
         if (file.exists()) return;
-        LOGGER.info("Initializing default configuration. config file = {}", filename);
+        logger.info("Initializing default configuration. config file = {}", filename);
         try {
             YamlUtils.getInstance().writeProperties(file, configurationService.readDefaultConfigs());
         } catch (IOException e) {
-            LOGGER.error("Error occured initializing Default configuration. {}", e.getMessage());
+            logger.error("Error occured initializing Default configuration. {}", e.getMessage());
         }
     }
 
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
 }
 
 

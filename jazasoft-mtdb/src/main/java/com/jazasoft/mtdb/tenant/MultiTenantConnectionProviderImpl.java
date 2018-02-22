@@ -137,16 +137,23 @@ public class MultiTenantConnectionProviderImpl
         DataSource dataSource = getDatasource(tenantIdentifier);
         map.put(tenantIdentifier, dataSource);
         initDb(tenantIdentifier);
-        SpringLiquibase liquibase = getLiquibase(dataSource);
+        String enabled = null;
         try {
-            liquibase.afterPropertiesSet();
-        } catch (LiquibaseException e) {
-            logger.error("Unable to perform liquibase migration. error: {}", e.getMessage());
+            enabled = (String) Utils.getConfProperty(IConfigKeys.LIQUIBASE_ENABLED);
+        } catch (IOException e) {
+            logger.error("Unable to read Config [liquibase.enabled]. error = {}", e.getMessage());
+        }
+        if (enabled != null && enabled.equalsIgnoreCase("true")) {
+            SpringLiquibase liquibase = getLiquibase(dataSource);
+            try {
+                liquibase.afterPropertiesSet();
+            } catch (LiquibaseException e) {
+                logger.error("Unable to perform liquibase migration. error: {}", e.getMessage());
+            }
         }
     }
 
     private SpringLiquibase getLiquibase(DataSource dataSource) {
-
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
         String changeLog = null;
@@ -156,8 +163,8 @@ public class MultiTenantConnectionProviderImpl
             logger.info("Liquibase Tenant changeLog filename not provided in Config file.");
         }
         if (changeLog == null) {
-            logger.info("Using default value for tenant changelog file = 'classpath:/db/schema-tenant.xml'");
-            changeLog = "classpath:/db/schema-tenant.xml";
+            logger.info("Using default value for tenant changelog file = 'classpath:/db/changelog-tenant.xml'");
+            changeLog = "classpath:/db/changelog-tenant.xml";
         }
         liquibase.setChangeLog(changeLog);
         liquibase.setResourceLoader(resourceLoader);
